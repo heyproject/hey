@@ -1,4 +1,4 @@
-## Hey App
+# Hey! App
 
 ---
 
@@ -10,6 +10,3 @@
 ### Getting Started
 
 > [Note]
-
-# Hey!
-Hey! App
