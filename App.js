@@ -48,15 +48,15 @@ export default class App extends React.Component {
       .auth()
       .signInWithCredential(credential)
       .then(userCred => {
-        console.warn(userCred.user.providerData);
-        this.setState({ user: userCred.user.providerData });
+        this.setState({ user: userCred.user });
       })
       .catch(console.error);
   };
   
   componentDidMount() {
-    firebase.auth().languageCode = 'it';
+    //firebase.auth().languageCode = 'it';
   }
+
   signIn = () => {
     const { phoneNumber } = this.state;
     this.setState(
@@ -116,33 +116,18 @@ export default class App extends React.Component {
                 });
                 break;
               default:
-              // will never get here - just for linting
+              // leave it blank
             }
           });
       }
     );
   };
-
+  
   renderInputPhoneNumber() {
     const { phoneNumber } = this.state;
     return (
       <View style={styles.containerInputPhone}>
-        <PhoneInput ref='phone' value={phoneNumber} onChangePhoneNumber={value => this.setState({ phoneNumber: value })} initialCountry='au' flagStyle={{width: 50, height: 30, borderWidth:0}} textStyle={{fontSize: 25, height: 40, borderBottomColor: '#a4a6aa', borderBottomWidth: 2}} textProps={{placeholder: 'Enter your Mobile Number'}}/>
-        <Button
-          title="Begin Verification"
-          color="green"
-          onPress={this.signIn}
-        />
-      </View>
-    );
-  }
-
-
-  renderInputPhoneNumber() {
-    const { phoneNumber } = this.state;
-    return (
-      <View style={styles.containerInputPhone}>
-        <PhoneInput ref='phone' value={phoneNumber} onChangePhoneNumber={value => this.setState({ phoneNumber: value })} initialCountry='au' flagStyle={{width: 50, height: 30, borderWidth:0}} textStyle={{fontSize: 25, height: 40, borderBottomColor: '#a4a6aa', borderBottomWidth: 2}} textProps={{placeholder: 'Enter your Mobile Number'}}/>
+        <PhoneInput ref='phone' value={phoneNumber} onChangePhoneNumber={value => this.setState({ phoneNumber: value })} initialCountry='au' flagStyle={{width: 50, height: 30, borderWidth:0, marginBottom: 20}} textStyle={{fontSize: 25, height: 40, borderBottomColor: '#a4a6aa', borderBottomWidth: 2, marginBottom: 20}} textProps={{placeholder: 'Enter your Mobile Number'}}/>
         <Button
           title="Begin Verification"
           color="green"
@@ -156,7 +141,7 @@ export default class App extends React.Component {
     const { codeInput } = this.state;
 
     return (
-      <View style={styles.containerVerificationCode}>
+      <View style={styles.bottomContainerBody}>
         <Text>Enter verification code below:</Text>
         <TextInput
           autoFocus
@@ -178,8 +163,8 @@ export default class App extends React.Component {
     const { phoneNumber } = this.state;
 
     return (
-      <View style={styles.containerVerificationCode}>
-        <Text style={{ paddingBottom: 25 }}>
+      <View style={styles.bottomContainerBody}>
+        <Text style={{ paddingTop: 25 }}>
           {`Sending verification code to '${phoneNumber}'.`}
         </Text>
         <ActivityIndicator animating style={{ padding: 50 }} size="large" />
@@ -199,7 +184,7 @@ export default class App extends React.Component {
       return this.renderSendingCode();
     }
     return (
-      <View style={styles.containerVerificationCode}>
+      <View style={styles.bottomContainerBody}>
         <Text style={{ paddingBottom: 25 }}>
           {`Verification code has been successfully sent to '${phoneNumber}'.`}
         </Text>
@@ -254,8 +239,8 @@ export default class App extends React.Component {
             this.renderInputVerificationCode()
            : null}
           {user ? (
-            <View style={styles.containerVerificationCode}>
-              <Text>Successfully Signed In!</Text>
+            <View style={styles.bottomContainerBody}>
+              <Text>{`Signed in with user id: '${user.uid}'`}</Text>
             </View>
           ) : null}
           </View>
@@ -286,14 +271,6 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     fontSize: 25,
   },
-  containerVerificationCode:{
-    backgroundColor: '#fff',
-    height: 150,
-    justifyContent: 'center',
-    paddingLeft: 20,
-    paddingRight: 20,
-    fontSize: 25,
-  },
   middleContainer:{
     height: 300
   },
@@ -310,5 +287,13 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     textAlign: 'center',
     width: width
+  },
+  bottomContainerBody:{
+    backgroundColor: '#fff',
+    height: 150,
+    justifyContent: 'center',
+    paddingLeft: 20,
+    paddingRight: 20,
+    fontSize: 25
   }
 });
