@@ -1,7 +1,8 @@
 import React from 'react';
-import { TextInput, ActivityIndicator, StyleSheet, Platform, Image, Text, View, ImageBackground, SafeAreaView, Dimensions, Button } from 'react-native';
-import PhoneInput from 'react-native-phone-input'
+import { Alert, TextInput, ActivityIndicator, StyleSheet, Platform, Image, Text, View, ImageBackground, SafeAreaView, Dimensions, Button } from 'react-native';
+import PhoneInput from 'react-native-phone-input';
 import firebase from 'react-native-firebase';
+import CodeInput from 'react-native-confirmation-code-input';
 
 var width = Dimensions.get('window').width; //full width
 var height = Dimensions.get('window').height; //full height
@@ -42,7 +43,6 @@ export default class App extends React.Component {
       verificationId,
       codeInput
     );
-
     // TODO do something with credential for example:
     firebase
       .auth()
@@ -137,18 +137,40 @@ export default class App extends React.Component {
     );
   }
 
+  _onFinishCheckingCode(isValid, code) {
+    if (!isValid) {
+      Alert.alert(
+        'Confirmation Code',
+        'Code not match!',
+        [{text: 'OK'}],
+        { cancelable: false }
+      );
+      this.refs.codeInputRef1.clear();
+    } else {
+      this.setState({ codeInput: code })
+    }
+  }
+
   renderInputVerificationCode() {
     const { codeInput } = this.state;
 
     return (
       <View style={styles.bottomContainerBody}>
         <Text>Enter verification code below:</Text>
-        <TextInput
-          autoFocus
-          style={{ height: 40, marginTop: 15, marginBottom: 15 }}
-          onChangeText={value => this.setState({ codeInput: value })}
-          placeholder="Code ... "
-          value={codeInput}
+        <CodeInput
+          ref="codeInputRef1"
+          codeLength={6}
+          keyboardType="numeric"
+          compareWithCode='123456'
+          activeColor='rgba(49, 180, 4, 1)'
+          inactiveColor='rgba(49, 180, 4, 1.3)'
+          autoFocus={true}
+          ignoreCase={true}
+          inputPosition='center'
+          size={50}
+          onFulfill={(isValid, code) => this._onFinishCheckingCode(isValid, code)}
+          containerStyle={{ marginTop: 30 }}
+          codeInputStyle={{ borderWidth: 1.5, fontSize: 20}}
         />
         <Button
           title="Confirm Code"
@@ -217,7 +239,7 @@ export default class App extends React.Component {
       </View>
     );
   }
-
+  
   render() {
     const { started, error, codeInput, sent, auto, user } = this.state;
     return (
