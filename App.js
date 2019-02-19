@@ -2,6 +2,14 @@ import React from 'react';
 import { StyleSheet, Platform, Image, Text, View, ImageBackground, SafeAreaView, Dimensions } from 'react-native';
 import PhoneInput from 'react-native-phone-input'
 import firebase from 'react-native-firebase';
+import {
+  FIREBASE_API_KEY,
+  AUTH_DOMAIN,
+  DATABASE_URL,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_STORAGE_BUCKET,
+  MESSAGE_ID
+} from 'react-native-dotenv';
 
 var width = Dimensions.get('window').width; //full width
 var height = Dimensions.get('window').height; //full height
@@ -12,15 +20,22 @@ export default class App extends React.Component {
     this.state = {};
   }
 
-  async componentDidMount() {
-    // TODO: You: Do firebase things
-    // const { user } = await firebase.auth().signInAnonymously();
-    // console.warn('User -> ', user.toJSON());
-
-    // await firebase.analytics().logEvent('foo', { bar: '123'});
+  /*componentWillMount() {
+    firebase.initializeApp({
+        apiKey: FIREBASE_API_KEY,
+        authDomain: AUTH_DOMAIN,
+        databaseURL: DATABASE_URL,
+        projectId: FIREBASE_PROJECT_ID,
+        storageBucket: FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: MESSAGE_ID
+    });
+  }*/
+  componentDidMount() {
+    firebase.auth().languageCode = 'it';
   }
 
   render() {
+
     return (
       <ImageBackground source={require('./assets/background.png')} style={styles.containerBackground} >
         <SafeAreaView style={styles.container}>
