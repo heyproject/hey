@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>373092207610-1e1jve7l8fqlopgo23uidndcn3806pef.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.373092207610-1e1jve7l8fqlopgo23uidndcn3806pef</string>
+	<key>API_KEY</key>
+	<string>AIzaSyByafs124sPuBPPaERuDHuWG_oU40U-SHE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>373092207610</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.mycompany.heyproject</string>
+	<key>PROJECT_ID</key>
+	<string>heyproject-230121</string>
+	<key>STORAGE_BUCKET</key>
+	<string>heyproject-230121.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:373092207610:ios:e387f9fdc85598da</string>
+	<key>DATABASE_URL</key>
+	<string>https://heyproject-230121.firebaseio.com</string>
+</dict>
+</plist>
