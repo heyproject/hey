@@ -1,6 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Platform, Image, Text, View, ImageBackground, SafeAreaView, Dimensions } from 'react-native';
 import PhoneInput from 'react-native-phone-input';
+import CountryPicker from 'react-native-country-picker-modal';
 import firebase from 'react-native-firebase';
 
 var width = Dimensions.get('window').width; //full width
@@ -15,7 +16,10 @@ export default class HomeScreen extends React.Component {
       auto: Platform.OS === 'android',
       sent: false,
       started: false,
-      user: null
+      user: null,
+      cca2: 'AU',
+      validPhoneNumber: false,
+      countryPhoneNumber: ''
     };
   }
 
@@ -23,6 +27,43 @@ export default class HomeScreen extends React.Component {
     super();
     this.timeout = 20;
     this.state = HomeScreen.getDefaultState();
+    this.onPressFlag = this.onPressFlag.bind(this);
+    this.selectCountry = this.selectCountry.bind(this);
+    this.signIn = this.signIn.bind(this);
+
+  }
+
+  componentDidMount() {
+    this.setState({
+      pickerData: this.phone.getPickerData(),
+    });
+  }
+
+  onPressFlag() {
+    this.countryPicker.openModal();
+  }
+
+  selectCountry(country) {
+    this.phone.selectCountry(country.cca2.toLowerCase());
+    this.setState({ cca2: country.cca2 });
+  }
+  
+  updatePhoneNumberInfo(){
+    this.setState({
+          validPhoneNumber: this.phone.isValidNumber(),
+          countryPhoneNumber: this.phone.getCountryCode(),
+          phoneNumber: this.phone.getValue()
+    })
+
+    //unable to use state validPhoneNumber immediately. maybe there is a delay?
+    if (this.phone.isValidNumber()){
+      //allow sign in if the phone number is valid
+      this.signIn()
+    }else{
+      this.setState({
+        error: "Oops! Invalid Phone Number."
+      })
+    }
   }
 
   signIn = () => {
@@ -86,7 +127,19 @@ export default class HomeScreen extends React.Component {
     const { phoneNumber } = this.state;
     return (
       <View style={styles.containerInputPhone}>
-        <PhoneInput ref='phone' value={phoneNumber} onChangePhoneNumber={value => this.setState({ phoneNumber: value })} initialCountry='au' flagStyle={{width: 50, height: 30, borderWidth:0, marginBottom: 20}} textStyle={{fontSize: 25, height: 40, borderBottomColor: '#a4a6aa', borderBottomWidth: 2, marginBottom: 20}} textProps={{placeholder: 'Enter your Mobile Number' , onSubmitEditing:this.signIn}}/>
+        <PhoneInput ref={(ref) => {
+            this.phone = ref;
+          }} onPressFlag={this.onPressFlag} allowZeroAfterCountryCode={false} value={phoneNumber} initialCountry={this.state.cca2.toLowerCase()} onChangePhoneNumber={value => this.setState({ phoneNumber: value })} flagStyle={{width: 50, height: 30, borderWidth:0, marginBottom: 20}} textStyle={{fontSize: 25, height: 40, borderBottomColor: '#a4a6aa', borderBottomWidth: 2, marginBottom: 20}} textProps={{placeholder: 'Enter your Mobile Number' , onSubmitEditing:this.updatePhoneNumberInfo.bind(this)}}/>
+        <CountryPicker
+          ref={(ref) => {
+            this.countryPicker = ref;
+          }}
+          onChange={value => this.selectCountry(value)}
+          translation="eng"
+          cca2={this.state.cca2}
+        >
+          <View />
+        </CountryPicker>
       </View>
     );
   }
