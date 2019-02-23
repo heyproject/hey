@@ -40,9 +40,15 @@ export default class VerificationCodeScreen extends React.Component {
         .auth()
         .signInWithCredential(credential)
         .then(userCred => {
-          this.props.navigation.navigate('User',  { 
-            user: userCred.user
-          });
+          if (userCred.additionalUserInfo.isNewUser){
+            this.props.navigation.navigate('SignUpPartOne',  { 
+              user: userCred.user
+            });
+          }else{
+            this.props.navigation.navigate('User',  { 
+              user: userCred.user
+            });
+          }
         })
         .catch(console.error);
     }
