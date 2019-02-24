@@ -27,6 +27,7 @@ export default class SignUpScreen extends React.Component {
     const user = this.props.navigation.getParam('user', 'no user found');
     const email = this.props.navigation.getParam('email', 'no email found');
     const phoneNumber = this.props.navigation.getParam('phoneNumber', 'no email found');
+
     const SignupSchema = Yup.object().shape({
       firstName: Yup.string()
         .min(2, 'Too Short!')
@@ -37,6 +38,7 @@ export default class SignUpScreen extends React.Component {
         .max(50, 'Too Long!')
         .required('Required')
     });
+
     return (
       <View style={styles.container}>
         <Text>Please fill in a few details below:</Text>
@@ -50,17 +52,20 @@ export default class SignUpScreen extends React.Component {
                 if (values.firstName != '' && values.lastName != ''){
                   //add the user to the database
                   //no password needed at the moment
-                  firebase.database().ref('users/' + user.uid).set({
+                  
+                  firebase.firestore().collection('users').add({
                     firstName: values.firstName,
                     lastName: values.lastName,
                     email: email,
                     phoneNumber: phoneNumber
                   })
+
                   this.props.navigation.navigate('User',  { 
                     user: user,
                     email: email,
                     firstName: values.firstName,
                     lastName: values.lastName,
+                    phoneNumber: values.phoneNumber
                   });
                 }
               }

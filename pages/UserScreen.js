@@ -18,14 +18,16 @@ export default class UserScreen extends React.Component {
 
   componentDidMount() {
     const userParam = this.props.navigation.getParam('user', 'no user found');
-    this.getUserData(userParam.uid);
+    this.getUserData(userParam.phoneNumber);
   }
 
-  getUserData = (uid) => {
-    let ref = firebase.database().ref('users/'+uid);
-    ref.once('value', snapshot => {
-      const state = snapshot.val();
-      this.setState({user: state});
+  getUserData = (phoneNumber) => {
+    firebase.firestore().collection('users').where("phoneNumber", "==", phoneNumber).limit(1).get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        //console.warn(doc.id, "=>", doc.data());
+        this.setState({user: doc.data()});
+      });
     });
   }
 
