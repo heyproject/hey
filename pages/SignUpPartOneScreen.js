@@ -42,7 +42,8 @@ export default class SignUpScreen extends React.Component {
                 Keyboard.dismiss();
                 this.props.navigation.navigate('SignUpPartTwo',  { 
                   user: user,
-                  email: values.email
+                  email: values.email,
+                  phoneNumber: user.phoneNumber
                 });
               }
             }>

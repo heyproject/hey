@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
-import { Alert, Keyboard, StyleSheet, Platform, View } from 'react-native';
+import { Keyboard, StyleSheet, Platform, View } from 'react-native';
 import { Formik } from 'formik';
-import { Button, TextInput, Text } from 'react-native-paper';
+import { TextInput, Text } from 'react-native-paper';
 import * as Yup from 'yup';
 import firebase from 'react-native-firebase';
-import { red } from 'ansi-colors';
 
 export default class SignUpScreen extends React.Component {
   static getDefaultState() {
@@ -27,6 +26,7 @@ export default class SignUpScreen extends React.Component {
   render() {
     const user = this.props.navigation.getParam('user', 'no user found');
     const email = this.props.navigation.getParam('email', 'no email found');
+    const phoneNumber = this.props.navigation.getParam('phoneNumber', 'no email found');
     const SignupSchema = Yup.object().shape({
       firstName: Yup.string()
         .min(2, 'Too Short!')
@@ -50,13 +50,11 @@ export default class SignUpScreen extends React.Component {
                 if (values.firstName != '' && values.lastName != ''){
                   //add the user to the database
                   //no password needed at the moment
-                  firebase.auth().createUserWithEmailAndPassword(email, 'password')
-                  .then((res) => {
-                      firebase.database().ref('users/' + user.uid).set({
-                          firstName: values.firstName,
-                          lastName: values.lastName,
-                          email: email,
-                      })
+                  firebase.database().ref('users/' + user.uid).set({
+                    firstName: values.firstName,
+                    lastName: values.lastName,
+                    email: email,
+                    phoneNumber: phoneNumber
                   })
                   this.props.navigation.navigate('User',  { 
                     user: user,
