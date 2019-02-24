@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { StyleSheet, Platform, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Platform, Text, View } from 'react-native';
 import firebase from 'react-native-firebase';
 
 export default class UserScreen extends React.Component {
@@ -7,7 +7,7 @@ export default class UserScreen extends React.Component {
     return {
       error: '',
       auto: Platform.OS === 'android',
-      user: ''
+      user: {}
     };
   }
 
@@ -16,11 +16,25 @@ export default class UserScreen extends React.Component {
     this.state = UserScreen.getDefaultState();
   }
 
+  componentDidMount() {
+    const userParam = this.props.navigation.getParam('user', 'no user found');
+    this.getUserData(userParam.uid);
+  }
+
+  getUserData = (uid) => {
+    let ref = firebase.database().ref('users/'+uid);
+    ref.once('value', snapshot => {
+      const state = snapshot.val();
+      this.setState({user: state});
+    });
+  }
+
   render() {
-    const user = this.props.navigation.getParam('user', 'no user found');
+    const {user} = this.state;
     return (
       <View style={styles.container}>
-      <Text>{`Signed in with user id: '${user.uid}'`}</Text>
+      {user.firstName ? (<Text>Hey {user.firstName}!</Text>) : null}
+      {!user ? (<ActivityIndicator animating style={{ padding: 50 }} size="large" />) : null}
     </View>
     )
   }

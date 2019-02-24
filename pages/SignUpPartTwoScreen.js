@@ -48,6 +48,16 @@ export default class SignUpScreen extends React.Component {
                 //Alert.alert(JSON.stringify(values, null, 2));
                 Keyboard.dismiss();
                 if (values.firstName != '' && values.lastName != ''){
+                  //add the user to the database
+                  //no password needed at the moment
+                  firebase.auth().createUserWithEmailAndPassword(email, 'password')
+                  .then((res) => {
+                      firebase.database().ref('users/' + user.uid).set({
+                          firstName: values.firstName,
+                          lastName: values.lastName,
+                          email: email,
+                      })
+                  })
                   this.props.navigation.navigate('User',  { 
                     user: user,
                     email: email,

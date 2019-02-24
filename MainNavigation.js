@@ -14,7 +14,7 @@ const AuthenticationNavigator = createStackNavigator({
   Home: HomeScreen,
   VerificationCode: VerificationCodeScreen,
   SignUpPartOne: SignUpPartOneScreen,
-  SignUpPartTwo: SignUpPartTwoScreen,
+  SignUpPartTwo: SignUpPartTwoScreen
 }, AuthenticationConfig);
 
 const AppNavigator = createSwitchNavigator({
