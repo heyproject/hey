@@ -13,7 +13,8 @@ export default class SignUpScreen extends React.Component {
       phoneNumber: '',
       firstName: '',
       lastName: '',
-      email: ''
+      email: '',
+      user: {}
     };
   }
 
@@ -23,10 +24,12 @@ export default class SignUpScreen extends React.Component {
     this.state = SignUpScreen.getDefaultState();
   }
 
+
   render() {
-    const user = this.props.navigation.getParam('user', 'no user found');
     const email = this.props.navigation.getParam('email', 'no email found');
     const phoneNumber = this.props.navigation.getParam('phoneNumber', 'no email found');
+    const verificationId = this.props.navigation.getParam('verificationId', 'no verification Id found');
+    const code = this.props.navigation.getParam('code', 'no code found');
 
     const SignupSchema = Yup.object().shape({
       firstName: Yup.string()
@@ -50,15 +53,35 @@ export default class SignUpScreen extends React.Component {
                 //Alert.alert(JSON.stringify(values, null, 2));
                 Keyboard.dismiss();
                 if (values.firstName != '' && values.lastName != ''){
+
                   //add the user to the database
-                  //no password needed at the moment
-                  
-                  firebase.firestore().collection('users').add({
+                  var addProvider = {};
+                  addProvider[user.providerData[0].providerId] = user.uid;
+                  var userData = {
                     firstName: values.firstName,
                     lastName: values.lastName,
                     email: email,
-                    phoneNumber: phoneNumber
-                  })
+                    phoneNumber: phoneNumber,
+                    dateCreated: firebase.firestore.FieldValue.serverTimestamp(),
+                    provider: addProvider
+                  }
+                  firebase.firestore().collection('users').add(userData)
+                  
+                  const credential = firebase.auth.PhoneAuthProvider.credential(
+                    verificationId,
+                    code
+                  );
+
+                  // Sign in with Credential
+                  firebase
+                    .auth()
+                    .signInWithCredential(credential)
+                    .then(userCred => {
+                      this.props.navigation.navigate('User',  { 
+                        user: {firstN}
+                      });
+                    })
+                    .catch(console.error);
 
                   this.props.navigation.navigate('User',  { 
                     user: user,

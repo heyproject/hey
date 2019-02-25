@@ -13,7 +13,9 @@ export default class SignUpScreen extends React.Component {
       phoneNumber: '',
       firstName: '',
       lastName: '',
-      email: ''
+      email: '',
+      verificationId: '',
+      code: ''
     };
   }
 
@@ -25,6 +27,8 @@ export default class SignUpScreen extends React.Component {
 
   render() {
     const user = this.props.navigation.getParam('user', 'no user found');
+    const verificationId = this.props.navigation.getParam('verificationId', 'no verification Id found');
+    const code = this.props.navigation.getParam('code', 'no code found');
     const SignupSchema = Yup.object().shape({
       email: Yup.string()
         .email('Invalid email')
@@ -43,7 +47,9 @@ export default class SignUpScreen extends React.Component {
                 this.props.navigation.navigate('SignUpPartTwo',  { 
                   user: user,
                   email: values.email,
-                  phoneNumber: user.phoneNumber
+                  phoneNumber: user.phoneNumber,
+                  verificationId: verificationId,
+                  code: code
                 });
               }
             }>

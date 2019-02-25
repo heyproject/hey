@@ -19,7 +19,8 @@ export default class HomeScreen extends React.Component {
       user: null,
       cca2: 'AU',
       validPhoneNumber: false,
-      countryPhoneNumber: ''
+      countryPhoneNumber: '',
+      loaded: false
     };
   }
 
@@ -30,13 +31,24 @@ export default class HomeScreen extends React.Component {
     this.onPressFlag = this.onPressFlag.bind(this);
     this.selectCountry = this.selectCountry.bind(this);
     this.signIn = this.signIn.bind(this);
-
   }
 
-  componentDidMount() {
-    this.setState({
-      pickerData: this.phone.getPickerData(),
-    });
+  componentDidMount(){
+    const currentUser = firebase.auth().currentUser;
+
+    if (currentUser) {
+      // User is signed in.
+      this.setState({
+        user: true,
+        loaded: true
+      });
+      this.props.navigation.navigate('User');
+    } else {
+      // No user is signed in.
+      this.setState({
+        loaded: true
+      });
+    }
   }
 
   onPressFlag() {
@@ -173,32 +185,53 @@ export default class HomeScreen extends React.Component {
       </View>
     );
   }
-  
-  render() {
-    const { started, error, sent } = this.state;
+
+  renderLoading() {
     return (
-      <ImageBackground source={require('../assets/background.png')} style={styles.containerBackground} >
-        <SafeAreaView style={styles.container}>
-          <View style={styles.topContainer}>
-            <Image source={require('../assets/ReactNativeFirebase.png')} style={[styles.logo]}/>
-          </View>
-          <View style={styles.middleContainer}>
-            {/* Insert Text Here */}
-          </View>
-          <View style={styles.bottomContainer}>
-            {error && error.length ? this.renderError() : null}
-          {!started && !sent ? this.renderInputPhoneNumber() : null}
-          {started && !sent
-            ? this.renderSendingCode()
-            : null}
-          </View>
-        </SafeAreaView>
-      </ImageBackground>
+      <ActivityIndicator animating style={{ padding: 50 }} size="large" />
     );
   }
+
+  render() {
+    const { started, error, sent, loaded, user } = this.state;
+    return (
+      <View style={styles.mainContainer}>
+        {!loaded ? this.renderLoading() : null }
+        {loaded && !user ? (      
+        <ImageBackground source={require('../assets/background.png')} style={styles.containerBackground} >
+          <SafeAreaView style={styles.container}>
+            <View style={styles.topContainer}>
+              <Image source={require('../assets/ReactNativeFirebase.png')} style={[styles.logo]}/>
+            </View>
+            <View style={styles.middleContainer}>
+              {/* Insert Text Here */}
+            </View>
+            <View style={styles.bottomContainer}>
+              {error && error.length ? this.renderError() : null}
+            {!started && !sent ? this.renderInputPhoneNumber() : null}
+            {started && !sent
+              ? this.renderSendingCode()
+              : null}
+            </View>
+          </SafeAreaView>
+        </ImageBackground>
+        ) : null }
+    </View>
+    );
+  }
+
 }
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    justifyContent: 'center'
+  },
+  horizontal: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10
+  },
   containerBackground: {
     flex: 1,
     alignItems: 'center',

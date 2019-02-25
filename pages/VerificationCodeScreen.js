@@ -8,8 +8,9 @@ export default class VerificationCodeScreen extends React.Component {
     return {
       error: '',
       auto: Platform.OS === 'android',
-      sent: '',
-      user: ''
+      user: '',
+      verificationId: '',
+      code: ''
     };
   }
 
@@ -30,32 +31,45 @@ export default class VerificationCodeScreen extends React.Component {
       );
       this.refs.codeInputRef1.clear();
     } else {
+      firebase.firestore().collection('users').where("phoneNumber", "==", user.uid).limit(1).get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
 
-      const credential = firebase.auth.PhoneAuthProvider.credential(
-        verificationId,
-        code
-      );
-      // Sign in with Credential
-      firebase
-        .auth()
-        .signInWithCredential(credential)
-        .then(userCred => {
-          if (userCred.additionalUserInfo.isNewUser){
-            this.props.navigation.navigate('SignUpPartOne',  { 
-              user: userCred.user
-            });
-          }else{
-            this.props.navigation.navigate('User',  { 
-              user: userCred.user
-            });
-          }
-        })
-        .catch(console.error);
+          const credential = firebase.auth.PhoneAuthProvider.credential(
+            verificationId,
+            code
+          );
+          
+          // Sign in with Credential
+          firebase
+            .auth()
+            .signInWithCredential(credential)
+            .then(userCred => {
+              if (userCred.additionalUserInfo.isNewUser){
+                this.props.navigation.navigate('SignUpPartOne',  { 
+                  user: userCred.user
+                });
+              }else{
+                this.props.navigation.navigate('User',  { 
+                  user: doc.data()
+                });
+              }
+            })
+            .catch(console.error);
+        });
+      }), function(error) {
+        // user not exist in the database, go to sign up page
+        this.props.navigation.navigate('SignUpPartOne',  { 
+          user: userCred.user,
+          verificationId: verificationId,
+          code: code
+        });
+        console.error(error);
+      };
     }
   }
 
   render() {
-    const sent = this.props.navigation.getParam('sent', 'no verification ID')
     const verificationId = this.props.navigation.getParam('verificationId', 'no verification ID');
     return (
       <View style={styles.container}>

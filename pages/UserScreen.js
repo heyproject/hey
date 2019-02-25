@@ -1,13 +1,17 @@
 import React, {Component} from 'react';
-import { ActivityIndicator, StyleSheet, Platform, Text, View } from 'react-native';
+import { Dimensions, SafeAreaView, ActivityIndicator, StyleSheet, Platform, Text, View } from 'react-native';
+import { Button } from 'react-native-paper';
 import firebase from 'react-native-firebase';
+
+var width = Dimensions.get('window').width; //full width
 
 export default class UserScreen extends React.Component {
   static getDefaultState() {
     return {
       error: '',
       auto: Platform.OS === 'android',
-      user: {}
+      user: {},
+      loaded: false
     };
   }
 
@@ -16,37 +20,101 @@ export default class UserScreen extends React.Component {
     this.state = UserScreen.getDefaultState();
   }
 
-  componentDidMount() {
-    const userParam = this.props.navigation.getParam('user', 'no user found');
-    this.getUserData(userParam.phoneNumber);
-  }
-
-  getUserData = (phoneNumber) => {
-    firebase.firestore().collection('users').where("phoneNumber", "==", phoneNumber).limit(1).get()
-    .then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        //console.warn(doc.id, "=>", doc.data());
-        this.setState({user: doc.data()});
-      });
+  componentDidMount(){
+    var that = this;
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        // User is signed in. Redirect to user page
+        const userProviderId = user.providerData[0].providerId;
+        firebase.firestore().collection('users').where("provider."+userProviderId, "==", user.uid).limit(1).get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            that.setState(
+              {
+                user: doc.data(),
+                loaded: true
+              })
+          });
+        });
+      } else {
+        // No user is signed in. Back to home page.
+        that.props.navigation.navigate('Home');
+      }
     });
   }
 
-  render() {
-    const {user} = this.state;
+  renderLoading() {
     return (
-      <View style={styles.container}>
-      {user.firstName ? (<Text>Hey {user.firstName}!</Text>) : null}
-      {!user ? (<ActivityIndicator animating style={{ padding: 50 }} size="large" />) : null}
-    </View>
+        <ActivityIndicator animating style={{ padding: 50 }} size="large" />
+    );
+  }
+
+  renderSignOutButton() {
+    return(
+      <Button mode="contained" onPress={() => 
+        firebase.auth().signOut().then(function() {
+        console.warn('Signed Out');
+      }, function(error) {
+        console.warn('Sign Out Error', error);
+      })}>
+      Sign Out
+    </Button>
+    );
+  }
+
+  render() {
+    const {user, loaded} = this.state;
+    return (
+      <View style={[styles.mainContainer]}>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.topContainer}>
+            {/* */}
+          </View>
+          <View style={styles.middleContainer}>
+          {loaded ? (
+          <Text>Hey {user.firstName}!</Text>
+          ) : null}
+          {!loaded && !user.firstName ? this.renderLoading() : null}
+          </View>
+          <View style={styles.bottomContainer}>
+          {loaded
+            ? this.renderSignOutButton()
+            : null}
+          </View>
+        </SafeAreaView>
+      </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    justifyContent: 'center'
+  },
+  horizontal: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10
+  },
   container: {
     flex: 1,
-    justifyContent: 'center',
+    flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: 'white'
+    justifyContent: 'center',
+    paddingTop: Platform.OS === 'android' ? 25 : 0
+  },
+  bottomContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignSelf: 'stretch',
+    textAlign: 'center',
+    width: width
+  },
+  middleContainer:{
+    height: 300
+  },
+  topContainer:{
+    height: 200
   }
 });
