@@ -20,8 +20,9 @@ export default class VerificationCodeScreen extends React.Component {
     this.state = VerificationCodeScreen.getDefaultState();
   }
 
-  _onFinishCheckingCode(isValid, code, verificationId) {
+  _onFinishCheckingCode(isValid, code, verificationId, phoneNumber) {
     
+    const that = this;
     if (!isValid) {
       Alert.alert(
         'Confirmation Code',
@@ -31,46 +32,46 @@ export default class VerificationCodeScreen extends React.Component {
       );
       this.refs.codeInputRef1.clear();
     } else {
-      firebase.firestore().collection('users').where("phoneNumber", "==", user.uid).limit(1).get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
+      const phoneNumberExist = firebase.firestore().collection('users').where("phoneNumber", "==", phoneNumber).get();
+      const credential = firebase.auth.PhoneAuthProvider.credential(
+        verificationId,
+        code
+      );
+      phoneNumberExist.then(snapshot => {
+          if (!snapshot.empty){
+            snapshot.forEach(doc => {
+              // Sign in with Credential
+              firebase
+                .auth()
+                .signInWithCredential(credential)
+                .then(userCred => {{
+                  //console.warn(doc.data());
+                    that.props.navigation.navigate('User',  { 
+                      user: doc.data()
+                    });
+                  }
+                })
+                .catch(console.error);
+                    });
+          }else{
+            // user not exist in the database, go to sign up page
+            this.props.navigation.navigate('SignUpPartOne',  { 
+              verificationId: verificationId,
+              code: code,
+              phoneNumber: phoneNumber
+            });
+          }
 
-          const credential = firebase.auth.PhoneAuthProvider.credential(
-            verificationId,
-            code
-          );
-          
-          // Sign in with Credential
-          firebase
-            .auth()
-            .signInWithCredential(credential)
-            .then(userCred => {
-              if (userCred.additionalUserInfo.isNewUser){
-                this.props.navigation.navigate('SignUpPartOne',  { 
-                  user: userCred.user
-                });
-              }else{
-                this.props.navigation.navigate('User',  { 
-                  user: doc.data()
-                });
-              }
-            })
-            .catch(console.error);
+                })
+        .catch(err => {
+            console.log('Error getting documents', err);
         });
-      }), function(error) {
-        // user not exist in the database, go to sign up page
-        this.props.navigation.navigate('SignUpPartOne',  { 
-          user: userCred.user,
-          verificationId: verificationId,
-          code: code
-        });
-        console.error(error);
-      };
     }
   }
 
   render() {
     const verificationId = this.props.navigation.getParam('verificationId', 'no verification ID');
+    const phoneNumber = this.props.navigation.getParam('phoneNumber', 'no verification ID');
     return (
       <View style={styles.container}>
         <Text>Enter verification code below:</Text>
@@ -85,7 +86,7 @@ export default class VerificationCodeScreen extends React.Component {
           ignoreCase={true}
           inputPosition='center'
           size={50}
-          onFulfill={(isValid, code) => this._onFinishCheckingCode(isValid, code, verificationId)}
+          onFulfill={(isValid, code) => this._onFinishCheckingCode(isValid, code, verificationId, phoneNumber)}
           containerStyle={{ marginTop: 30 }}
           codeInputStyle={{ borderWidth: 1.5, fontSize: 20}}
         />

@@ -26,7 +26,7 @@ export default class SignUpScreen extends React.Component {
   }
 
   render() {
-    const user = this.props.navigation.getParam('user', 'no user found');
+    const phoneNumber = this.props.navigation.getParam('phoneNumber', 'no user found');
     const verificationId = this.props.navigation.getParam('verificationId', 'no verification Id found');
     const code = this.props.navigation.getParam('code', 'no code found');
     const SignupSchema = Yup.object().shape({
@@ -44,10 +44,9 @@ export default class SignUpScreen extends React.Component {
             onSubmit={values => {
                 //Alert.alert(JSON.stringify(values.email, null, 2));
                 Keyboard.dismiss();
-                this.props.navigation.navigate('SignUpPartTwo',  { 
-                  user: user,
+                this.props.navigation.navigate('SignUpPartTwo',  {
                   email: values.email,
-                  phoneNumber: user.phoneNumber,
+                  phoneNumber: phoneNumber,
                   verificationId: verificationId,
                   code: code
                 });

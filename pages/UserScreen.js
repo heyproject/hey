@@ -21,39 +21,52 @@ export default class UserScreen extends React.Component {
   }
 
   componentDidMount(){
+    const currentUser = firebase.auth().currentUser;
+    const user = this.props.navigation.getParam('user', null);
     var that = this;
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        // User is signed in. Redirect to user page
-        const userProviderId = user.providerData[0].providerId;
-        firebase.firestore().collection('users').where("provider."+userProviderId, "==", user.uid).limit(1).get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            that.setState(
-              {
-                user: doc.data(),
-                loaded: true
-              })
-          });
-        });
-      } else {
-        // No user is signed in. Back to home page.
-        that.props.navigation.navigate('Home');
-      }
-    });
+
+    if (currentUser && user){
+      this.setState({
+        user: user,
+        loaded: true
+      })
+    }else if (!currentUser) {
+      // No user is signed in.
+      this.props.navigation.navigate('Home');
+    }else if (!user){
+      const userProvider = currentUser.providerData[0].providerId;
+      const userData = firebase.firestore().collection('users').where("provider."+userProvider, "==", currentUser.uid).get();
+      userData.then(snapshot => {
+        if (!snapshot.empty){
+          snapshot.forEach(doc => {
+            that.setState({
+              user: doc.data(),
+              loaded: true
+            })
+          })
+        }else{
+          // No data found
+          firebase.auth().signOut();
+          this.props.navigation.navigate('Home');
+        }
+      })
+    }
+    
   }
 
   renderLoading() {
     return (
-        <ActivityIndicator animating style={{ padding: 50 }} size="large" />
+      <ActivityIndicator animating style={{ padding: 50 }} size="large" />
     );
   }
 
   renderSignOutButton() {
+    var that = this;
     return(
       <Button mode="contained" onPress={() => 
         firebase.auth().signOut().then(function() {
-        console.warn('Signed Out');
+          that.props.navigation.navigate('Home');
+        //console.warn('Signed Out');
       }, function(error) {
         console.warn('Sign Out Error', error);
       })}>
@@ -63,7 +76,7 @@ export default class UserScreen extends React.Component {
   }
 
   render() {
-    const {user, loaded} = this.state;
+    const {loaded, user} = this.state;
     return (
       <View style={[styles.mainContainer]}>
         <SafeAreaView style={styles.container}>

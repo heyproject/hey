@@ -27,7 +27,7 @@ export default class SignUpScreen extends React.Component {
 
   render() {
     const email = this.props.navigation.getParam('email', 'no email found');
-    const phoneNumber = this.props.navigation.getParam('phoneNumber', 'no email found');
+    const phoneNumber = this.props.navigation.getParam('phoneNumber', 'no phone number found');
     const verificationId = this.props.navigation.getParam('verificationId', 'no verification Id found');
     const code = this.props.navigation.getParam('code', 'no code found');
 
@@ -54,19 +54,6 @@ export default class SignUpScreen extends React.Component {
                 Keyboard.dismiss();
                 if (values.firstName != '' && values.lastName != ''){
 
-                  //add the user to the database
-                  var addProvider = {};
-                  addProvider[user.providerData[0].providerId] = user.uid;
-                  var userData = {
-                    firstName: values.firstName,
-                    lastName: values.lastName,
-                    email: email,
-                    phoneNumber: phoneNumber,
-                    dateCreated: firebase.firestore.FieldValue.serverTimestamp(),
-                    provider: addProvider
-                  }
-                  firebase.firestore().collection('users').add(userData)
-                  
                   const credential = firebase.auth.PhoneAuthProvider.credential(
                     verificationId,
                     code
@@ -77,19 +64,24 @@ export default class SignUpScreen extends React.Component {
                     .auth()
                     .signInWithCredential(credential)
                     .then(userCred => {
+                      //add the user to the database
+                      var addProvider = {};
+                      addProvider[userCred.user.providerData[0].providerId] = userCred.user.uid;
+                      var userData = {
+                        firstName: values.firstName,
+                        lastName: values.lastName,
+                        email: email,
+                        phoneNumber: phoneNumber,
+                        dateCreated: firebase.firestore.FieldValue.serverTimestamp(),
+                        provider: addProvider
+                      }
+                      firebase.firestore().collection('users').add(userData)
+
                       this.props.navigation.navigate('User',  { 
-                        user: {firstN}
+                        user: userData
                       });
                     })
                     .catch(console.error);
-
-                  this.props.navigation.navigate('User',  { 
-                    user: user,
-                    email: email,
-                    firstName: values.firstName,
-                    lastName: values.lastName,
-                    phoneNumber: values.phoneNumber
-                  });
                 }
               }
             }>
