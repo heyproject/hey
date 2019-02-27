@@ -11,7 +11,8 @@ export default class UserScreen extends React.Component {
       error: '',
       auto: Platform.OS === 'android',
       user: {},
-      loaded: false
+      loaded: false,
+      user_uid: ''
     };
   }
 
@@ -21,36 +22,34 @@ export default class UserScreen extends React.Component {
   }
 
   componentDidMount(){
-    const currentUser = firebase.auth().currentUser;
-    const user = this.props.navigation.getParam('user', null);
     var that = this;
 
-    if (currentUser && user){
-      this.setState({
-        user: user,
-        loaded: true
-      })
-    }else if (!currentUser) {
-      // No user is signed in.
-      this.props.navigation.navigate('Home');
-    }else if (!user){
-      const userProvider = currentUser.providerData[0].providerId;
-      const userData = firebase.firestore().collection('users').where("provider."+userProvider, "==", currentUser.uid).get();
-      userData.then(snapshot => {
-        if (!snapshot.empty){
-          snapshot.forEach(doc => {
-            that.setState({
-              user: doc.data(),
-              loaded: true
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        // User is signed in.
+        const userProvider = user.providerData[0].providerId;
+        const userData = firebase.firestore().collection('users').where("provider."+userProvider, "==", user.uid).get();
+        userData.then(snapshot => {
+          if (!snapshot.empty){
+            snapshot.forEach(doc => {
+              that.setState({
+                user_uid: doc.id,
+                user: doc.data(),
+                loaded: true
+              });
             })
-          })
-        }else{
-          // No data found
-          firebase.auth().signOut();
-          this.props.navigation.navigate('Home');
-        }
-      })
-    }
+          }else{
+            // No data found
+            firebase.auth().signOut();
+            that.props.navigation.navigate('Home');
+          }
+        });
+        
+      } else {
+        // No user is signed in.
+        that.props.navigation.navigate('Home');
+      }
+    });
     
   }
 

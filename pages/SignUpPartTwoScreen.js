@@ -75,11 +75,9 @@ export default class SignUpScreen extends React.Component {
                         dateCreated: firebase.firestore.FieldValue.serverTimestamp(),
                         provider: addProvider
                       }
-                      firebase.firestore().collection('users').add(userData)
+                      firebase.firestore().collection('users').add(userData);
 
-                      this.props.navigation.navigate('User',  { 
-                        user: userData
-                      });
+                      this.props.navigation.navigate('User');
                     })
                     .catch(console.error);
                 }

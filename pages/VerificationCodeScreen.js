@@ -44,7 +44,7 @@ export default class VerificationCodeScreen extends React.Component {
               firebase
                 .auth()
                 .signInWithCredential(credential)
-                .then(userCred => {{
+                .then(() => {{
                   //console.warn(doc.data());
                     that.props.navigation.navigate('User',  { 
                       user: doc.data()
