@@ -56,57 +56,6 @@
           "status": 2
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:373092207610:android:e387f9fdc85598da",
-        "android_client_info": {
-          "package_name": "com.mycompany.heyproject"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "373092207610-k5au5h7jeh4obuo37abi83abgbgdu1ao.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.mycompany.heyproject",
-            "certificate_hash": "ef842b302023453a6b139af502b85cf173f4681a"
-          }
-        },
-        {
-          "client_id": "373092207610-34atgkfi0k3t65pa04dcqieqrlmvt82v.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAIrpjUDLVkiLFKiSVuuWUPm249FP5_rXE"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "373092207610-34atgkfi0k3t65pa04dcqieqrlmvt82v.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "373092207610-1e1jve7l8fqlopgo23uidndcn3806pef.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.mycompany.heyproject"
-              }
-            }
-          ]
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
     }
   ],
   "configuration_version": "1"
