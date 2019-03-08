@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { Dimensions, SafeAreaView, ActivityIndicator, StyleSheet, Platform, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import firebase from 'react-native-firebase';
+import UserMenu from '../components/UserMenu';
 
 var width = Dimensions.get('window').width; //full width
 
@@ -77,7 +78,12 @@ export default class UserScreen extends React.Component {
   render() {
     const {loaded, user} = this.state;
     return (
+
       <View style={[styles.mainContainer]}>
+        <View style={styles.menuContainer}>
+          <UserMenu>
+          </UserMenu>
+        </View>
         <SafeAreaView style={styles.container}>
           <View style={styles.topContainer}>
             {/* */}
@@ -100,6 +106,9 @@ export default class UserScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  menuContainer: {
+    flex: 1
+  },
   mainContainer: {
     flex: 1,
     justifyContent: 'center'

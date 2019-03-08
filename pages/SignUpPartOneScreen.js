@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
-import { Alert, Keyboard, StyleSheet, Platform, View } from 'react-native';
+import { Keyboard, StyleSheet, Platform, View } from 'react-native';
 import { Formik } from 'formik';
-import { Button, TextInput, Text } from 'react-native-paper';
+import { TextInput, Text } from 'react-native-paper';
 import * as Yup from 'yup';
-import firebase from 'react-native-firebase';
 
 export default class SignUpScreen extends React.Component {
   static getDefaultState() {
