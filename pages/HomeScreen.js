@@ -42,7 +42,9 @@ export default class HomeScreen extends React.Component {
         user: true,
         loaded: true
       });
-      this.props.navigation.navigate('User');
+      this.props.navigation.navigate('MainTab',  {
+        user : currentUser
+      });
     } else {
       // No user is signed in.
       this.setState({

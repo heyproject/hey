@@ -77,7 +77,7 @@ export default class SignUpScreen extends React.Component {
                       }
                       firebase.firestore().collection('users').add(userData);
 
-                      this.props.navigation.navigate('User');
+                      this.props.navigation.navigate('MapScreen');
                     })
                     .catch(console.error);
                 }

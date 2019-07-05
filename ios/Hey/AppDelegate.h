@@ -7,6 +7,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import <Google-Maps-iOS-Utils/GMUMarkerClustering.h>
+
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (nonatomic, strong) UIWindow *window;

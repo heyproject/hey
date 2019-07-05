@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-platform :ios, '9.0'
+ platform :ios, '9.0'
 
 target 'Hey' do
   # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
@@ -23,11 +23,52 @@ target 'Hey' do
   pod 'Firebase/RemoteConfig', '~> 5.15.0'
   pod 'Firebase/Storage', '~> 5.15.0'
   pod 'Firebase/Performance', '~> 5.15.0'
+  pod 'FirebaseUI/Storage'
   pod 'Fabric', '~> 1.7.13'
   pod 'Crashlytics', '~> 3.10.9'
+  # pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
+  # pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
+  pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler/ios'
+  
+
+  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
+  pod 'react-native-maps', :path => '../node_modules/react-native-maps'
+
+  pod 'React', :path => '../node_modules/react-native', :subspecs => [
+    'Core',
+    'RCTImage', # <- Add this line
+    'DevSupport', # Include this to enable In-App Devmenu if RN >= 0.43
+    'RCTText',
+    'RCTNetwork',
+    'RCTWebSocket', # needed for debugging
+    'RCTLinkingIOS',
+  ]
+
+  pod 'ReactNativeNavigation', :path => '../node_modules/react-native-navigation'
+
+  pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga/yoga.podspec'
+
+  pod 'GoogleMaps'
+
+  pod 'GooglePlaces'
+
+  pod 'GooglePlacePicker'
+
+  pod 'Google-Maps-iOS-Utils'
+
+  #pod 'react-native-swipe-gestures'
+
+  post_install do |installer|
+    installer.pods_project.targets.each do |target|
+      if target.name == "React"
+        target.remove_from_project
+      end
+    end
+  end
+
 
 end

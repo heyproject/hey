@@ -154,6 +154,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-google-places')
+    implementation project(':react-native-maps')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-firebase')
     implementation project(':react-native-gesture-handler')
