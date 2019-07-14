@@ -462,14 +462,24 @@ export default class MainTabScreen extends Component <Props> {
                     <View style={{ paddingTop: 10 }}>
                         <CardList title={'My Favourites'}>
                         <Card1 style={styles.card} a={this.state.items[0]}/>
-                        {/* <If condition={this.state.items.length > 1}> */}
+                        <If condition={this.state.items.length > 1}>
                             <Card1 style={styles.card} a={this.state.items[1]}/>
-                        {/* </If> */}
-                        {/* <Card1 style={styles.card} a={this.state.items[2]}/>
+                        </If>
+                        <If condition={this.state.items.length > 2}>
+                        <Card1 style={styles.card} a={this.state.items[2]}/>
+                        </If>
+                        <If condition={this.state.items.length > 3}>
                         <Card1 style={styles.card} a={this.state.items[3]}/>
+                        </If>
+                        <If condition={this.state.items.length > 4}>
                         <Card1 style={styles.card} a={this.state.items[4]}/>
+                        </If>
+                        <If condition={this.state.items.length > 5}>
                         <Card1 style={styles.card} a={this.state.items[5]}/>
-                        <Card1 style={styles.card} a={this.state.items[6]}/> */}
+                        </If>
+                        <If condition={this.state.items.length > 6}>
+                        <Card1 style={styles.card} a={this.state.items[6]}/>
+                        </If>
                         </CardList>
                         <CardList title={'Italian foods'}>
                         <Card2 style={styles.card} />
