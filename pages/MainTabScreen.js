@@ -19,7 +19,12 @@ import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 import Swipeable from 'react-native-swipeable';
 // import FirebaseStorage from 'Firebase/Storage';
 
-import Card from '../components/Card'
+// import Card from '../components/Card'
+
+import Card1 from '../components/Cardfavourites'
+import Card2 from '../components/Carditalian'
+import Card3 from '../components/Cardkorean'
+import Card4 from '../components/Cardspecials'
 import CardList from '../components/CardList'
 
 
@@ -208,6 +213,7 @@ export default class MainTabScreen extends Component <Props> {
         mounted: true,
         image: "/Products/holland-martabak.jpg",
         url: "",
+        a:"",
         };
     }
     
@@ -240,7 +246,7 @@ export default class MainTabScreen extends Component <Props> {
                                            that.props.navigation.navigate('Home');
                                            }
                                            });
-       this.getJob();
+    //    this.getJob();
 
        this.setState({ isMounted: true });
 
@@ -258,67 +264,68 @@ export default class MainTabScreen extends Component <Props> {
 
         }
     }
-        async getJob()
-        { /* Remove arrow function */
-            // console.warn(user);
-            var that = this;
-            
-            const db = firebase.firestore();
-            db.settings({ timestampsInSnapshots: true});
-                    const query = db.collection('Jobs').where('completed', '==', 'N').where('assignedto', '==', 'null').limit(5);
-                    const snapshot = await query.get();
-                    const items = snapshot.docs.map(doc => doc.data());
-
-                    const itemsID = snapshot.docs.map(doc => doc.id);
 
 
-                    // console.warn(items);
-                    if (Object.keys(itemsID).length > 0 ){
-                    this.setState({itemsID: itemsID});
-                    // console.warn(this.state.itemsID);
-                    };
-
-                    if (Object.keys(items).length > 0 ){
-                    this.setState({items: items});
-                    // console.warn(this.state.items);
-                    };
-
-    };
-    
     async getProduct()
-    { if (this.state.mounted == true) {
-        const ref = firebase.storage().ref(this.state.image);
-        const data = await ref.getDownloadURL().then(data => {
-            this.setState({ url: data })
-            this.setState({ loading: false })
-        }).catch(error => {
-            this.setState({ url: "/Products/holland-martabak.jpg" })
-            this.setState({ loading: false })
-        })
-        console.warn(this.state.url);
-    }
+    { var that = this;
+      // var i = 0;
+      // var photoID = 0;
+      
+      if (this.state.mounted == true) {
+      // var i = 0;
+      // var photoID = 0;
+    //   console.warn(this.state.mounted);
+      const db = firebase.firestore();
+            db.settings({ timestampsInSnapshots: true});
+                    const query = db.collection('Products').where('available', '==', 'Y').limit(10);
+                    const snapshot = await query.get();
 
-        
+                    const items = snapshot.docs.map(
+                      doc => doc.data(),
+                      // photoID = i + 1, 
+                    );
+                    
+                    // photoID = i + 1;
+                        // console.warn(items);
+                    // const itemsID = snapshot.docs.map(doc => doc.id);
+                    var itemsID = snapshot.docs.map(
+                      doc => doc.data().imagepath,
+                      
+                      );
 
+                      this.setState({ items: items,
+                                      itemsID: itemsID
+                      });
+                    //   console.warn(this.state.itemsID);
 
-        
+                    // this.setState({ productname: this.state.items[this.props.a].productname,
+                    //   productprice: this.state.items[this.props.a].price
+                    // });
+                    
+                    // console.warn(itemsID[this.props.a]);
+                    // var storage = firebase.storage();
+                    // // for (var i = 0; i <= itemsID.length - 1; i++) {
 
+                    //   refPath = storage.ref(itemsID[this.props.a]);
+                    //   // console.warn(refPath);
+                    //       refPath.getDownloadURL().then(data => {
+                    //             this.setState({ url: data}),
+                    //             this.setState({ loading: false });
+                    //         }).catch(function(error) {
+                    //           console.warn(error);
+                    //       })
+                      // }
+                //   console.warn(this.state.itemsID);
+                  }
     };
-
-    
-    async acceptall()
-    {
-        // const test1 = this.state.items;
-        console.warn(this.state.itemsID);
-
-        const db = firebase.firestore();
-        db.settings({ timestampsInSnapshots: true});
-        const query = db.collection('Jobs').where('FieldPath.documentId()', 'array-contains', 'this.state.itemsID');
-        const getquery = await query.get();
-        const set = getquery.docs.map(doc => doc.data());
         
-        console.warn(set);
-    };
+
+
+        
+
+    // };
+
+   
 
     swipeable = null;
  
@@ -340,7 +347,13 @@ export default class MainTabScreen extends Component <Props> {
         // const {leftActionActivated} = this.state.toggle;
         // const {toggle} = this.state.leftActionActivated;
         const {leftActionActivated, toggle} = this.state;
-        // console.warn(this.state.toggle);
+        // console.warn(this.state.items);
+
+        if (this.state.items.length == 0 ) {
+            return null
+          } else {
+            console.log(this.state.items);
+          }
 
         const itemID = this.state.itemID[0];
         const JobID = itemID;
@@ -448,40 +461,42 @@ export default class MainTabScreen extends Component <Props> {
                     <ScrollView style={styles.scrollViewContainer}>
                     <View style={{ paddingTop: 10 }}>
                         <CardList title={'My Favourites'}>
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
+                        <Card1 style={styles.card} a={this.state.items[0]}/>
+                        {/* <If condition={this.state.items.length > 1}> */}
+                            <Card1 style={styles.card} a={this.state.items[1]}/>
+                        {/* </If> */}
+                        {/* <Card1 style={styles.card} a={this.state.items[2]}/>
+                        <Card1 style={styles.card} a={this.state.items[3]}/>
+                        <Card1 style={styles.card} a={this.state.items[4]}/>
+                        <Card1 style={styles.card} a={this.state.items[5]}/>
+                        <Card1 style={styles.card} a={this.state.items[6]}/> */}
                         </CardList>
                         <CardList title={'Italian foods'}>
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
+                        <Card2 style={styles.card} />
+                        <Card2 style={styles.card} />
+                        <Card2 style={styles.card} />
+                        <Card2 style={styles.card} />
+                        <Card2 style={styles.card} />
+                        <Card2 style={styles.card} />
+                        <Card2 style={styles.card} />
                         </CardList>
                         <CardList title={'Korean foods'}>
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
+                        <Card3 style={styles.card} />
+                        <Card3 style={styles.card} />
+                        <Card3 style={styles.card} />
+                        <Card3 style={styles.card} />
+                        <Card3 style={styles.card} />
+                        <Card3 style={styles.card} />
+                        <Card3 style={styles.card} />
                         </CardList>
                         <CardList title={'Special Deals'}>
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
-                        <Card style={styles.card} />
+                        <Card4 style={styles.card} />
+                        <Card4 style={styles.card} />
+                        <Card4 style={styles.card} />
+                        <Card4 style={styles.card} />
+                        <Card4 style={styles.card} />
+                        <Card4 style={styles.card} />
+                        <Card4 style={styles.card} />
                         </CardList>
                     </View>
                     </ScrollView>

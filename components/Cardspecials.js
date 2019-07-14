@@ -151,7 +151,7 @@ componentWillReceiveProps(props) {
                       
                       this.setState({ productname: this.state.items[i].productname 
                       });
-                      console.warn(itemsID[i]);
+                      // console.warn(itemsID[i]);
 
                       refPath = storage.ref(itemsID[i]);
                       
@@ -245,7 +245,7 @@ componentWillReceiveProps(props) {
     if (this.state.itemsID.length == 0) {
       return null
     } else {
-    console.warn(this.state.itemsID);
+    // console.warn(this.state.itemsID);
     // this.getProductdetails();
     }
     // console.warn(this.state.itemsID.length);
@@ -256,7 +256,7 @@ componentWillReceiveProps(props) {
       return null
     }
     else {
-      console.warn(this.state.url);
+      // console.warn(this.state.url);
       // console.warn(this.state.productname);
     return (
       <View style={this.props.style}>
