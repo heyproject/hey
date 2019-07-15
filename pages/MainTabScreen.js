@@ -197,6 +197,14 @@ export default class MainTabScreen extends Component <Props> {
         Jobs: [],
         items: [],
         itemsID: [],
+        myfavitems: [],
+        myfavitemsID: [],
+        italianitems: [],
+        italianitemsID: [],
+        koreanitems: [],
+        koreanitemsID: [],
+        specialdealitems: [],
+        specialdealitemsID: [],
         items_array: [],
         Provider:"",
         itemID: [],
@@ -250,8 +258,13 @@ export default class MainTabScreen extends Component <Props> {
 
        this.setState({ isMounted: true });
 
-       this.getProduct();
+       this.getmyfavProduct();
+
+       this.getitalianProduct();
        
+       this.getkoreanProduct();
+
+       this.getspecialdealProduct();
     }
     
     componentWillUnmount() {
@@ -266,15 +279,9 @@ export default class MainTabScreen extends Component <Props> {
     }
 
 
-    async getProduct()
-    { var that = this;
-      // var i = 0;
-      // var photoID = 0;
-      
+    async getmyfavProduct()
+    { 
       if (this.state.mounted == true) {
-      // var i = 0;
-      // var photoID = 0;
-    //   console.warn(this.state.mounted);
       const db = firebase.firestore();
             db.settings({ timestampsInSnapshots: true});
                     const query = db.collection('Products').where('available', '==', 'Y').limit(10);
@@ -293,34 +300,97 @@ export default class MainTabScreen extends Component <Props> {
                       
                       );
 
-                      this.setState({ items: items,
-                                      itemsID: itemsID
+                      this.setState({ myfavitems: items,
+                                      myfavitemsID: itemsID
                       });
-                    //   console.warn(this.state.itemsID);
-
-                    // this.setState({ productname: this.state.items[this.props.a].productname,
-                    //   productprice: this.state.items[this.props.a].price
-                    // });
-                    
-                    // console.warn(itemsID[this.props.a]);
-                    // var storage = firebase.storage();
-                    // // for (var i = 0; i <= itemsID.length - 1; i++) {
-
-                    //   refPath = storage.ref(itemsID[this.props.a]);
-                    //   // console.warn(refPath);
-                    //       refPath.getDownloadURL().then(data => {
-                    //             this.setState({ url: data}),
-                    //             this.setState({ loading: false });
-                    //         }).catch(function(error) {
-                    //           console.warn(error);
-                    //       })
-                      // }
-                //   console.warn(this.state.itemsID);
+                   
                   }
     };
         
 
+    async getitalianProduct()
+    { 
+      if (this.state.mounted == true) {
+      const db = firebase.firestore();
+            db.settings({ timestampsInSnapshots: true});
+                    const query = db.collection('Products').where('available', '==', 'Y').where('productcategory', '==', 'Italian').limit(10);
+                    const snapshot = await query.get();
 
+                    const items = snapshot.docs.map(
+                      doc => doc.data(),
+                      // photoID = i + 1, 
+                    );
+                    
+                    // photoID = i + 1;
+                        // console.warn(items);
+                    // const itemsID = snapshot.docs.map(doc => doc.id);
+                    var itemsID = snapshot.docs.map(
+                      doc => doc.data().imagepath,
+                      
+                      );
+
+                      this.setState({ italianitems: items,
+                                    italianitemsID: itemsID
+                      });
+                   
+                  }
+    };
+
+    async getkoreanProduct()
+    { 
+      if (this.state.mounted == true) {
+      const db = firebase.firestore();
+            db.settings({ timestampsInSnapshots: true});
+                    const query = db.collection('Products').where('available', '==', 'Y').limit(10);
+                    const snapshot = await query.get();
+
+                    const items = snapshot.docs.map(
+                      doc => doc.data(),
+                      // photoID = i + 1, 
+                    );
+                    
+                    // photoID = i + 1;
+                        // console.warn(items);
+                    // const itemsID = snapshot.docs.map(doc => doc.id);
+                    var itemsID = snapshot.docs.map(
+                      doc => doc.data().imagepath,
+                      
+                      );
+
+                      this.setState({ koreanitems: items,
+                                    koreanitemsID: itemsID
+                      });
+                   
+                  }
+    };
+
+    async getspecialdealProduct()
+    { 
+      if (this.state.mounted == true) {
+      const db = firebase.firestore();
+            db.settings({ timestampsInSnapshots: true});
+                    const query = db.collection('Products').where('available', '==', 'Y').limit(10);
+                    const snapshot = await query.get();
+
+                    const items = snapshot.docs.map(
+                      doc => doc.data(),
+                      // photoID = i + 1, 
+                    );
+                    
+                    // photoID = i + 1;
+                        // console.warn(items);
+                    // const itemsID = snapshot.docs.map(doc => doc.id);
+                    var itemsID = snapshot.docs.map(
+                      doc => doc.data().imagepath,
+                      
+                      );
+
+                      this.setState({ specialdealitems: items,
+                                    specialdealitemsID: itemsID
+                      });
+                   
+                  }
+    };
         
 
     // };
@@ -343,30 +413,46 @@ export default class MainTabScreen extends Component <Props> {
           };
     
     render() {
-        // const data = this.props.items || [];
-        // const {leftActionActivated} = this.state.toggle;
-        // const {toggle} = this.state.leftActionActivated;
         const {leftActionActivated, toggle} = this.state;
         // console.warn(this.state.items);
 
-        if (this.state.items.length == 0 ) {
+        if (this.state.myfavitems.length == 0 ) {
             return null
           } else {
-            console.log(this.state.items);
+            console.log(this.state.myfavitems);
           }
 
-        const itemID = this.state.itemID[0];
-        const JobID = itemID;
-        const Username = JSON.stringify(this.state.items.UserName);
+        if (this.state.italianitems.length == 0 ) {
+            return null
+          } else {
+            console.log(this.state.italianitems);
+          }  
+
+        if (this.state.koreanitems.length == 0 ) {
+            return null
+          } else {
+            console.log(this.state.koreanitems);
+          }  
+
+        if (this.state.specialdealitems.length == 0 ) {
+            return null
+          } else {
+            console.log(this.state.specialdealitems);
+          }  
+
+
+        // const itemID = this.state.itemID[0];
+        // const JobID = itemID;
+        // const Username = JSON.stringify(this.state.items.UserName);
 
         const currentUser = firebase.auth().currentUser;
 
-        let Username2 = this.state.items;
+        // let Username2 = this.state.items;
 
-        if (!this.state.user_uid == false){
-            // console.warn(this.state.user_uid);
-            const user = this.state.user_uid
-        };
+        // if (!this.state.user_uid == false){
+        //     // console.warn(this.state.user_uid);
+        //     const user = this.state.user_uid
+        // };
 
         const config = {
             velocityThreshold: 0.3,
@@ -419,9 +505,7 @@ export default class MainTabScreen extends Component <Props> {
           
         return(
                (<p>{ this.state.items || 'Loading' }</p>),
-            //    console.warn(itemID),
-            //    console.warn(Username),
-            // console.warn(Username2),
+
                <Container>
                {/* <Header>
                    <Left style={{left: 20}}>
@@ -461,52 +545,96 @@ export default class MainTabScreen extends Component <Props> {
                     <ScrollView style={styles.scrollViewContainer}>
                     <View style={{ paddingTop: 10 }}>
                         <CardList title={'My Favourites'}>
-                        <Card1 style={styles.card} a={this.state.items[0]}/>
-                        <If condition={this.state.items.length > 1}>
-                            <Card1 style={styles.card} a={this.state.items[1]}/>
-                        </If>
-                        <If condition={this.state.items.length > 2}>
-                        <Card1 style={styles.card} a={this.state.items[2]}/>
-                        </If>
-                        <If condition={this.state.items.length > 3}>
-                        <Card1 style={styles.card} a={this.state.items[3]}/>
-                        </If>
-                        <If condition={this.state.items.length > 4}>
-                        <Card1 style={styles.card} a={this.state.items[4]}/>
-                        </If>
-                        <If condition={this.state.items.length > 5}>
-                        <Card1 style={styles.card} a={this.state.items[5]}/>
-                        </If>
-                        <If condition={this.state.items.length > 6}>
-                        <Card1 style={styles.card} a={this.state.items[6]}/>
-                        </If>
+                            <If condition={this.state.myfavitems.length > 0}>
+                                <Card1 style={styles.card} a={this.state.myfavitems[0]}/>
+                            </If>
+                            <If condition={this.state.myfavitems.length > 1}>
+                                <Card1 style={styles.card} a={this.state.myfavitems[1]}/>
+                            </If>
+                            <If condition={this.state.myfavitems.length > 2}>
+                                <Card1 style={styles.card} a={this.state.myfavitems[2]}/>
+                            </If>
+                            <If condition={this.state.myfavitems.length > 3}>
+                                <Card1 style={styles.card} a={this.state.myfavitems[3]}/>
+                            </If>
+                            <If condition={this.state.myfavitems.length > 4}>
+                                <Card1 style={styles.card} a={this.state.myfavitems[4]}/>
+                            </If>
+                            <If condition={this.state.myfavitems.length > 5}>
+                                <Card1 style={styles.card} a={this.state.myfavitems[5]}/>
+                            </If>
+                            <If condition={this.state.myfavitems.length > 6}>
+                                <Card1 style={styles.card} a={this.state.myfavitems[6]}/>
+                            </If>
                         </CardList>
                         <CardList title={'Italian foods'}>
-                        <Card2 style={styles.card} />
-                        <Card2 style={styles.card} />
-                        <Card2 style={styles.card} />
-                        <Card2 style={styles.card} />
-                        <Card2 style={styles.card} />
-                        <Card2 style={styles.card} />
-                        <Card2 style={styles.card} />
+                            <If condition={this.state.italianitems.length > 0}>
+                                <Card2 style={styles.card} a={this.state.italianitems[0]}/>
+                            </If>
+                            <If condition={this.state.italianitems.length > 1}>
+                                <Card2 style={styles.card} a={this.state.italianitems[1]}/>
+                            </If>
+                            <If condition={this.state.italianitems.length > 2}>
+                                <Card2 style={styles.card} a={this.state.italianitems[2]}/>
+                            </If>
+                            <If condition={this.state.italianitems.length > 3}>
+                                <Card2 style={styles.card} a={this.state.italianitems[3]}/>
+                            </If>
+                            <If condition={this.state.italianitems.length > 4}>
+                                <Card2 style={styles.card} a={this.state.italianitems[4]}/>
+                            </If>
+                            <If condition={this.state.italianitems.length > 5}>
+                                <Card2 style={styles.card} a={this.state.italianitems[5]}/>
+                            </If>
+                            <If condition={this.state.italianitems.length > 6}>
+                                <Card2 style={styles.card} a={this.state.italianitems[6]}/>
+                            </If>
                         </CardList>
                         <CardList title={'Korean foods'}>
-                        <Card3 style={styles.card} />
-                        <Card3 style={styles.card} />
-                        <Card3 style={styles.card} />
-                        <Card3 style={styles.card} />
-                        <Card3 style={styles.card} />
-                        <Card3 style={styles.card} />
-                        <Card3 style={styles.card} />
+                            <If condition={this.state.koreanitems.length > 0}>
+                                <Card3 style={styles.card} a={this.state.koreanitems[0]}/>
+                            </If>
+                            <If condition={this.state.koreanitems.length > 1}>
+                                <Card3 style={styles.card} a={this.state.koreanitems[1]}/>
+                            </If>
+                            <If condition={this.state.koreanitems.length > 2}>
+                                <Card3 style={styles.card} a={this.state.koreanitems[2]}/>
+                            </If>
+                            <If condition={this.state.koreanitems.length > 3}>
+                                <Card3 style={styles.card} a={this.state.koreanitems[3]}/>
+                            </If>
+                            <If condition={this.state.koreanitems.length > 4}>
+                                <Card3 style={styles.card} a={this.state.koreanitems[4]}/>
+                            </If>
+                            <If condition={this.state.koreanitems.length > 5}>
+                                <Card3 style={styles.card} a={this.state.koreanitems[5]}/>
+                            </If>
+                            <If condition={this.state.koreanitems.length > 6}>
+                                <Card3 style={styles.card} a={this.state.koreanitems[6]}/>
+                            </If>
                         </CardList>
                         <CardList title={'Special Deals'}>
-                        <Card4 style={styles.card} />
-                        <Card4 style={styles.card} />
-                        <Card4 style={styles.card} />
-                        <Card4 style={styles.card} />
-                        <Card4 style={styles.card} />
-                        <Card4 style={styles.card} />
-                        <Card4 style={styles.card} />
+                        <If condition={this.state.specialdealitems.length > 0}>
+                                <Card4 style={styles.card} a={this.state.specialdealitems[0]}/>
+                            </If>
+                            <If condition={this.state.specialdealitems.length > 1}>
+                                <Card4 style={styles.card} a={this.state.specialdealitems[1]}/>
+                            </If>
+                            <If condition={this.state.specialdealitems.length > 2}>
+                                <Card4 style={styles.card} a={this.state.specialdealitems[2]}/>
+                            </If>
+                            <If condition={this.state.specialdealitems.length > 3}>
+                                <Card4 style={styles.card} a={this.state.specialdealitems[3]}/>
+                            </If>
+                            <If condition={this.state.specialdealitems.length > 4}>
+                                <Card4 style={styles.card} a={this.state.specialdealitems[4]}/>
+                            </If>
+                            <If condition={this.state.specialdealitems.length > 5}>
+                                <Card4 style={styles.card} a={this.state.specialdealitems[5]}/>
+                            </If>
+                            <If condition={this.state.specialdealitems.length > 6}>
+                                <Card4 style={styles.card} a={this.state.specialdealitems[6]}/>
+                            </If>
                         </CardList>
                     </View>
                     </ScrollView>

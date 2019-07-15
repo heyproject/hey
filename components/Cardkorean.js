@@ -37,6 +37,9 @@ class Card extends React.Component {
     mounted: true,
     image: "/Products/image2.jpg",
     url: "",
+    currency: "",
+    category: "",
+    pricelevel: "",
     };
 }
 
@@ -73,6 +76,7 @@ class Card extends React.Component {
    this.setState({ isMounted: true });
 
    this.getProduct();
+
    
 }
 
@@ -102,27 +106,17 @@ componentWillReceiveProps(props) {
 
   async getProduct()
     { var that = this;
-      var i = 0;
-      var photoID = 0;
+      // var i = 0;
+      // var photoID = 0;
       
       if (this.state.mounted == true) {
-      var i = 0;
-      var photoID = 0;
+      // var i = 0;
+      // var photoID = 0;
 
       const db = firebase.firestore();
             db.settings({ timestampsInSnapshots: true});
                     const query = db.collection('Products').where('available', '==', 'Y').limit(10);
                     const snapshot = await query.get();
-                    // query.then(snapshot => {
-                    //   if (!snapshot.empty){
-                    //   snapshot.forEach(doc => {
-                    //                    that.setState({
-                    //                                  ProductID: doc.id,
-                    //                                  Product: doc.data(),
-                    //                                  loaded: true
-                    //                                  });
-                    //                    })
-                    //   }});
 
                     const items = snapshot.docs.map(
                       doc => doc.data(),
@@ -140,117 +134,33 @@ componentWillReceiveProps(props) {
                       this.setState({ items: items,
                                       itemsID: itemsID
                       });
-                    // const itemsurl =itemsID[i];
-                    // i = i + 1;
+                      // console.warn(this.props.a);
 
-                    // console.warn(this.state.items);
+                    this.setState({ productname: this.props.a.productname,
+                      productprice: this.props.a.price,
+                      currency: this.props.a.currency,
+                      category: this.props.a.productcategory,
+                      pricelevel: this.props.a.pricelevel,
+                    });
+                    
+                    // console.warn(itemsID[this.props.a]);
                     var storage = firebase.storage();
-                    for (var i = 0; i <= itemsID.length - 1; i++) {
-                      // photoId = i + 1;
-                      // console.warn(itemsID[i]);
-                      
-                      this.setState({ productname: this.state.items[i].productname 
-                      });
-                      // console.warn(itemsID[i]);
+                    // for (var i = 0; i <= itemsID.length - 1; i++) {
 
-                      refPath = storage.ref(itemsID[i]);
-                      
-                      // (function(pid) {
+                      refPath = storage.ref(this.props.a.imagepath);
+                      // console.warn(refPath);
                           refPath.getDownloadURL().then(data => {
                                 this.setState({ url: data}),
                                 this.setState({ loading: false });
-                  //               this.setState({ productname: items[i].productname ,
-                  //                 productprice: items[i].price
-                  // });
-                                // console.warn(this.state.url);
-                      // console.warn(this.state.productname);
-                      //           console.warn(this.state.url);
-                                // this.setState({ Product: items[i] });
-                                // console.warn(data);
                             }).catch(function(error) {
                               console.warn(error);
                           })
-                      // });
-                      // console.warn(this.state.productprice);
-                      // console.warn(this.state.productname);
-                      //           console.warn(this.state.url);
-                    // console.warn(photoID);
-                    // console.warn(i);
-                  }
-
-                  
-        // const ref = firebase.storage().ref(itemsurl);
-        // const data = await ref.getDownloadURL().then(data => {
-        //     this.setState({ url: data })
-        //     this.setState({ loading: false })
-        // }).catch(error => {
-        //     this.setState({ url: "/Products/holland-martabak.jpg" })
-        //     this.setState({ loading: false })
-        // })
-
-
-        // console.warn(this.state.url);
-    }
-
-    // console.warn(this.state.productname);
-
-    // console.warn(this.state.url);
-    
-
+                      // }  
+              }
     };
 
-    getProductdetails()
-    {
-      // if (this.state.mounted == true) {
-      var i = 0;
-      var photoID = 0;
-      var storage = firebase.storage();
-                    for (var i = 0; i <= this.state.itemsID.length - 1; i++) {
-                      // photoId = i + 1;
-                      // console.warn(itemsID[i]);
-                      
-                      this.setState({ productname: this.state.items[i].productname 
-                      });
-                      // console.warn(this.state.itemsID);
-
-                      refPath = storage.ref(this.state.itemsID[i]);
-                      
-                      // (function(pid) {
-                          refPath.getDownloadURL().then(data => {
-                                this.setState({ url: data}),
-                                this.setState({ loading: false });
-                  //               this.setState({ productname: items[i].productname ,
-                  //                 productprice: items[i].price
-                  // });
-                                // console.warn(this.state.url);
-                      // console.warn(this.state.productname);
-                      //           console.warn(this.state.url);
-                                // this.setState({ Product: items[i] });
-                                // console.warn(data);
-                            }).catch(function(error) {
-                              console.warn(error);
-                          })
-                      // });
-                      
-                      // console.warn(this.state.productprice);
-                      // console.warn(this.state.productname);
-                      //           console.warn(this.state.url);
-                    // console.warn(photoID);
-                    // console.warn(i);
-                  }
-                // }
-    };
 
   render() {
-    if (this.state.itemsID.length == 0) {
-      return null
-    } else {
-    // console.warn(this.state.itemsID);
-    // this.getProductdetails();
-    }
-    // console.warn(this.state.itemsID.length);
-    // console.warn(this.state.url.length);
-    // this.getProductdetails(this.state.itemsID);
 
     if (this.state.url.length == 0) {
       return null
@@ -280,11 +190,11 @@ componentWillReceiveProps(props) {
               {/* </TouchableOpacity> */}
             </View>
             <Text style={styles.title}>{this.state.productname}</Text>
-            <Text style={styles.description}>$$ . Healthy</Text>
+            <Text style={styles.description}>{this.state.pricelevel} . {this.state.category}</Text>
             <View style={styles.tagContainer}>
               <Tag>25-35 min</Tag>
               <Tag>4.6 (500+)</Tag>
-              <Tag>Price: AUD {this.state.productprice}</Tag>
+              <Tag>Price: {this.state.currency} {this.state.productprice}</Tag>
             </View>
           </View>
         </TouchableOpacity>
