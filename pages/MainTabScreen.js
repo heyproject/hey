@@ -341,7 +341,7 @@ export default class MainTabScreen extends Component <Props> {
       if (this.state.mounted == true) {
       const db = firebase.firestore();
             db.settings({ timestampsInSnapshots: true});
-                    const query = db.collection('Products').where('available', '==', 'Y').limit(10);
+                    const query = db.collection('Products').where('available', '==', 'Y').where('productcategory','==','Korean');
                     const snapshot = await query.get();
 
                     const items = snapshot.docs.map(
@@ -369,7 +369,7 @@ export default class MainTabScreen extends Component <Props> {
       if (this.state.mounted == true) {
       const db = firebase.firestore();
             db.settings({ timestampsInSnapshots: true});
-                    const query = db.collection('Products').where('available', '==', 'Y').limit(10);
+                    const query = db.collection('Products').where('available', '==', 'Y').where('specialdeals','==','Y');
                     const snapshot = await query.get();
 
                     const items = snapshot.docs.map(
