@@ -6,7 +6,7 @@ import MapView, {PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import { Marker, Callout } from 'react-native-maps';
 import RNGooglePlaces from 'react-native-google-places';
 import { NativeEventEmitter, NativeModules } from 'react-native';
-import { Container, Header, Content, Footer, FooterTab, Button, Icon, Badge, ListItem, Left, Right, Body, List, Title} from 'native-base';
+import { Container, Header, Content, Footer, FooterTab, Button, Icon, Item, Input, Badge, ListItem, Left, Right, Body, List, Title} from 'native-base';
 import {Fonts, Ionicons, Icons} from 'react-native-vector-icons';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Geocoder from 'react-native-geocoding';
@@ -27,10 +27,6 @@ import Card3 from '../components/Cardkorean'
 import Card4 from '../components/Cardspecials'
 import CardList from '../components/CardList'
 
-
-
-const homePlace = { description: 'Home', geometry: { location: { lat: 48.8152937, lng: 2.4597668 } }};
-const workPlace = { description: 'Work', geometry: { location: { lat: 48.8496818, lng: 2.2940881 } }};
 
 //Geocoder.init('AIzaSyByafs124sPuBPPaERuDHuWG_oU40U-SHE'); // initialize the geocoder
 
@@ -73,7 +69,7 @@ const styles = StyleSheet.create({
                                  padding: 10,
                                  backgroundColor: 'white'
                                  },
-                                 pickupInput: {
+                                 productInput: {
                                  height: 40,
                                  borderWidth: 0.5,
                                  marginLeft: 40,
@@ -152,7 +148,12 @@ const styles = StyleSheet.create({
                                   scrollViewContainer: {
                                     flex: 1,
                                     backgroundColor: '#eee',
-                                    marginTop: 100,
+                                    marginTop: 0,
+                                  },
+                                  headerContainer: {
+                                    flex: 1,
+                                    backgroundColor: '#eee',
+                                    marginTop: 0,
                                   },
                                   card: {
                                     marginRight: 10
@@ -173,9 +174,9 @@ const LATITUDE_DELTA = 0.0922
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO
 
 
-export default class MainTabScreen extends Component <Props> {
+export default class ProductSearchScreen extends Component <Props> {
     static navigationOptions = {
-    title: 'MainTabScreen',
+    title: 'ProductSearchScreen',
     };
     static getDefaultState() {
         return {
@@ -223,6 +224,10 @@ export default class MainTabScreen extends Component <Props> {
         url: "",
         a:"",
         };
+        this.onChangeproductDebounced = _.debounce(
+            this.onChangeproduct,
+            1500
+            );
     }
     
     componentDidMount() {
@@ -258,13 +263,6 @@ export default class MainTabScreen extends Component <Props> {
 
        this.setState({ isMounted: true });
 
-       this.getmyfavProduct();
-
-       this.getitalianProduct();
-       
-       this.getkoreanProduct();
-
-       this.getspecialdealProduct();
     }
     
     componentWillUnmount() {
@@ -278,13 +276,19 @@ export default class MainTabScreen extends Component <Props> {
         }
     }
 
-
-    async getmyfavProduct()
-    { 
-      if (this.state.mounted == true) {
+    async onChangeproduct(product) {
+        this.setState({ product })
+        
+        console.warn(product);
+        
+        this.setState({
+                      productpredictions: product
+                      });
+        
+        if (this.state.mounted == true) {
       const db = firebase.firestore();
             db.settings({ timestampsInSnapshots: true});
-                    const query = db.collection('Products').where('available', '==', 'Y').limit(10);
+                    const query = db.collection('Products').where('productname', 'array-contains', 'Martabak').limit(10);
                     const snapshot = await query.get();
 
                     const items = snapshot.docs.map(
@@ -292,6 +296,7 @@ export default class MainTabScreen extends Component <Props> {
                       // photoID = i + 1, 
                     );
                     
+                    console.warn(items);
                     // photoID = i + 1;
                         // console.warn(items);
                     // const itemsID = snapshot.docs.map(doc => doc.id);
@@ -305,95 +310,11 @@ export default class MainTabScreen extends Component <Props> {
                       });
                    
                   }
-    };
+
         
+    }
 
-    async getitalianProduct()
-    { 
-      if (this.state.mounted == true) {
-      const db = firebase.firestore();
-            db.settings({ timestampsInSnapshots: true});
-                    const query = db.collection('Products').where('available', '==', 'Y').where('productcategory', '==', 'Italian').limit(10);
-                    const snapshot = await query.get();
 
-                    const items = snapshot.docs.map(
-                      doc => doc.data(),
-                      // photoID = i + 1, 
-                    );
-                    
-                    // photoID = i + 1;
-                        // console.warn(items);
-                    // const itemsID = snapshot.docs.map(doc => doc.id);
-                    var itemsID = snapshot.docs.map(
-                      doc => doc.data().imagepath,
-                      
-                      );
-
-                      this.setState({ italianitems: items,
-                                    italianitemsID: itemsID
-                      });
-                   
-                  }
-    };
-
-    async getkoreanProduct()
-    { 
-      if (this.state.mounted == true) {
-      const db = firebase.firestore();
-            db.settings({ timestampsInSnapshots: true});
-                    const query = db.collection('Products').where('available', '==', 'Y').where('productcategory','==','Korean');
-                    const snapshot = await query.get();
-
-                    const items = snapshot.docs.map(
-                      doc => doc.data(),
-                      // photoID = i + 1, 
-                    );
-                    
-                    // photoID = i + 1;
-                        // console.warn(items);
-                    // const itemsID = snapshot.docs.map(doc => doc.id);
-                    var itemsID = snapshot.docs.map(
-                      doc => doc.data().imagepath,
-                      
-                      );
-
-                      this.setState({ koreanitems: items,
-                                    koreanitemsID: itemsID
-                      });
-                   
-                  }
-    };
-
-    async getspecialdealProduct()
-    { 
-      if (this.state.mounted == true) {
-      const db = firebase.firestore();
-            db.settings({ timestampsInSnapshots: true});
-                    const query = db.collection('Products').where('available', '==', 'Y').where('specialdeals','==','Y');
-                    const snapshot = await query.get();
-
-                    const items = snapshot.docs.map(
-                      doc => doc.data(),
-                      // photoID = i + 1, 
-                    );
-                    
-                    // photoID = i + 1;
-                        // console.warn(items);
-                    // const itemsID = snapshot.docs.map(doc => doc.id);
-                    var itemsID = snapshot.docs.map(
-                      doc => doc.data().imagepath,
-                      
-                      );
-
-                      this.setState({ specialdealitems: items,
-                                    specialdealitemsID: itemsID
-                      });
-                   
-                  }
-    };
-        
-
-    // };
 
    
 
@@ -414,45 +335,13 @@ export default class MainTabScreen extends Component <Props> {
     
     render() {
         const {leftActionActivated, toggle} = this.state;
-        // console.warn(this.state.items);
-
-        if (this.state.myfavitems.length == 0 ) {
-            return null
-          } else {
-            console.log(this.state.myfavitems);
-          }
-
-        if (this.state.italianitems.length == 0 ) {
-            return null
-          } else {
-            console.log(this.state.italianitems);
-          }  
-
-        if (this.state.koreanitems.length == 0 ) {
-            return null
-          } else {
-            console.log(this.state.koreanitems);
-          }  
-
-        if (this.state.specialdealitems.length == 0 ) {
-            return null
-          } else {
-            console.log(this.state.specialdealitems);
-          }  
-
-
-        // const itemID = this.state.itemID[0];
-        // const JobID = itemID;
-        // const Username = JSON.stringify(this.state.items.UserName);
+       
 
         const currentUser = firebase.auth().currentUser;
 
-        // let Username2 = this.state.items;
 
-        // if (!this.state.user_uid == false){
-        //     // console.warn(this.state.user_uid);
-        //     const user = this.state.user_uid
-        // };
+        const productpredictions = this.state.productpredictions;
+                
 
         // const config = {
         //     velocityThreshold: 0.3,
@@ -530,7 +419,21 @@ export default class MainTabScreen extends Component <Props> {
                         </Button>
                    </Right>
                </Header> */}
-             
+            
+               
+                <Header searchBar rounded>
+                    <Item>
+                        <Icon name="ios-search" />
+                        <Input placeholder="Enter product keywords..."
+                        value={this.state.product}
+                        onChangeText={product =>
+                                        this.onChangeproductDebounced(product)
+                                        } />
+                        {/* <Icon name="ios-people" /> */}
+                    </Item>
+                </Header>
+              
+
                <Content>
                         {/* <GestureRecognizer
                         // onSwipe={(direction, state) => this.getJob()}
@@ -541,11 +444,27 @@ export default class MainTabScreen extends Component <Props> {
                         config={config}
                         > */}
 
+            {/* <View style={styles.headerContainer}>
+                        <TextInput
+                        placeholder="Enter product keywords..."
+                        style={styles.productInput}
+                        value={this.state.product}
+                        onChangeText={product =>
+                                        this.onChangeproductDebounced(product)
+                                        }
+                
+                        />
+                
+                                    {productpredictions}
+            </View> */}
+
             <View style={styles.container}>
+                
+
                     <ScrollView style={styles.scrollViewContainer}>
-                        <View style={{ paddingTop: 10 }}>
-                            <CardList title={'My Favourites'}>
-                                <If condition={this.state.myfavitems.length > 0}>
+                        <View style={{ alignItems: 'center',}}>
+                            <CardList title={'Results'}>
+                                {/* <If condition={this.state.myfavitems.length > 0}>
                                     <Card1 style={styles.card} a={this.state.myfavitems[0]}/>
                                 </If>
                                 <If condition={this.state.myfavitems.length > 1}>
@@ -565,80 +484,12 @@ export default class MainTabScreen extends Component <Props> {
                                 </If>
                                 <If condition={this.state.myfavitems.length > 6}>
                                     <Card1 style={styles.card} a={this.state.myfavitems[6]}/>
-                                </If>
-                            </CardList>
-                            <CardList title={'Italian foods'}>
-                                <If condition={this.state.italianitems.length > 0}>
-                                    <Card2 style={styles.card} a={this.state.italianitems[0]}/>
-                                </If>
-                                <If condition={this.state.italianitems.length > 1}>
-                                    <Card2 style={styles.card} a={this.state.italianitems[1]}/>
-                                </If>
-                                <If condition={this.state.italianitems.length > 2}>
-                                    <Card2 style={styles.card} a={this.state.italianitems[2]}/>
-                                </If>
-                                <If condition={this.state.italianitems.length > 3}>
-                                    <Card2 style={styles.card} a={this.state.italianitems[3]}/>
-                                </If>
-                                <If condition={this.state.italianitems.length > 4}>
-                                    <Card2 style={styles.card} a={this.state.italianitems[4]}/>
-                                </If>
-                                <If condition={this.state.italianitems.length > 5}>
-                                    <Card2 style={styles.card} a={this.state.italianitems[5]}/>
-                                </If>
-                                <If condition={this.state.italianitems.length > 6}>
-                                    <Card2 style={styles.card} a={this.state.italianitems[6]}/>
-                                </If>
-                            </CardList>
-                            <CardList title={'Korean foods'}>
-                                <If condition={this.state.koreanitems.length > 0}>
-                                    <Card3 style={styles.card} a={this.state.koreanitems[0]}/>
-                                </If>
-                                <If condition={this.state.koreanitems.length > 1}>
-                                    <Card3 style={styles.card} a={this.state.koreanitems[1]}/>
-                                </If>
-                                <If condition={this.state.koreanitems.length > 2}>
-                                    <Card3 style={styles.card} a={this.state.koreanitems[2]}/>
-                                </If>
-                                <If condition={this.state.koreanitems.length > 3}>
-                                    <Card3 style={styles.card} a={this.state.koreanitems[3]}/>
-                                </If>
-                                <If condition={this.state.koreanitems.length > 4}>
-                                    <Card3 style={styles.card} a={this.state.koreanitems[4]}/>
-                                </If>
-                                <If condition={this.state.koreanitems.length > 5}>
-                                    <Card3 style={styles.card} a={this.state.koreanitems[5]}/>
-                                </If>
-                                <If condition={this.state.koreanitems.length > 6}>
-                                    <Card3 style={styles.card} a={this.state.koreanitems[6]}/>
-                                </If>
-                            </CardList>
-                            <CardList title={'Special Deals'}>
-                            <If condition={this.state.specialdealitems.length > 0}>
-                                    <Card4 style={styles.card} a={this.state.specialdealitems[0]}/>
-                                </If>
-                                <If condition={this.state.specialdealitems.length > 1}>
-                                    <Card4 style={styles.card} a={this.state.specialdealitems[1]}/>
-                                </If>
-                                <If condition={this.state.specialdealitems.length > 2}>
-                                    <Card4 style={styles.card} a={this.state.specialdealitems[2]}/>
-                                </If>
-                                <If condition={this.state.specialdealitems.length > 3}>
-                                    <Card4 style={styles.card} a={this.state.specialdealitems[3]}/>
-                                </If>
-                                <If condition={this.state.specialdealitems.length > 4}>
-                                    <Card4 style={styles.card} a={this.state.specialdealitems[4]}/>
-                                </If>
-                                <If condition={this.state.specialdealitems.length > 5}>
-                                    <Card4 style={styles.card} a={this.state.specialdealitems[5]}/>
-                                </If>
-                                <If condition={this.state.specialdealitems.length > 6}>
-                                    <Card4 style={styles.card} a={this.state.specialdealitems[6]}/>
-                                </If>
+                                </If> */}
                             </CardList>
                         </View>
                     </ScrollView>
-                <View style={styles.headerContainer}></View>
+                
+                
 
                      
                        
@@ -654,7 +505,7 @@ export default class MainTabScreen extends Component <Props> {
                <Footer style={{bottom: 0, position: 'absolute'}}>
                            <FooterTab>
                                
-                               <Button active vertical>
+                               <Button vertical>
             
                <Icon type="Entypo" name="home" 
                onPress= {() => this.props.navigation.navigate('MainTabScreen', {
@@ -664,9 +515,9 @@ export default class MainTabScreen extends Component <Props> {
                                <Text>Home</Text>
                                </Button>
 
-                               <Button badge vertical>
+                               <Button active vertical>
         
-                               <Badge><Text>2</Text></Badge>
+                               {/* <Badge><Text>2</Text></Badge> */}
                <Icon type="FontAwesome" name="search" 
                onPress= {() => this.props.navigation.navigate('ProductSearchScreen') }/>
                                <Text>Search</Text>
