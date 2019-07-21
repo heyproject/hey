@@ -288,7 +288,7 @@ export default class ProductSearchScreen extends Component <Props> {
         if (this.state.mounted == true) {
       const db = firebase.firestore();
             db.settings({ timestampsInSnapshots: true});
-                    const query = db.collection('Products').where('productname', 'array-contains', 'Martabak').limit(10);
+                    const query = db.collection('Products').where('productname', '==', 'Martabak').limit(10);
                     const snapshot = await query.get();
 
                     const items = snapshot.docs.map(

@@ -48,6 +48,7 @@
     "react-native-google-places-autocomplete": "^1.3.9",
     "react-native-maps": "^0.23.0",
     "react-native-maps-directions": "^1.6.0",
+    "react-native-modal": "^11.1.0",
     "react-native-navigation": "^2.13.1",
     "react-native-paper": "^2.11.1",
     "react-native-phone-input": "^0.2.1",

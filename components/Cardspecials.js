@@ -4,6 +4,8 @@ import { withNavigation } from 'react-navigation'
 import Tag from './Tag'
 // import { Ionicons } from '@expo/vector-icons';
 import * as firebase from 'react-native-firebase';
+import Modal from "react-native-modal";
+import { Container, Header, Content, Footer, FooterTab, Button, Icon, Badge, ListItem, Left, Right, Body, List, Title} from 'native-base';
 
 // import {Fonts, Ionicons, Icons} from 'react-native-vector-icons';
 
@@ -40,7 +42,10 @@ class Card extends React.Component {
     currency: "",
     category: "",
     pricelevel: "",
+    isModalVisible: false,
     };
+
+    
 }
 
   componentDidMount() {
@@ -103,6 +108,13 @@ componentWillReceiveProps(props) {
     this.setState({ liked: false })
     this.heartSize.setValue(1)
   }
+
+  toggleModal = () => {
+    this.setState({ isModalVisible: !this.state.isModalVisible });
+
+    // console.warn(this.state.isModalVisible);
+  };
+
 
   async getProduct()
     { var that = this;
@@ -170,7 +182,8 @@ componentWillReceiveProps(props) {
       // console.warn(this.state.productname);
     return (
       <View style={this.props.style}>
-        <TouchableOpacity activeOpacity={0.7} onPress={() => this.props.navigation.navigate('Menu')}>
+        <TouchableOpacity activeOpacity={0.7} onPress={this.toggleModal} >
+        {/* <Modal isVisible={this.state.isModalVisible}> */}
           <View style={styles.container}>
             <View>
               <Image style={styles.image} source={{ uri: this.state.url }} />
@@ -197,8 +210,59 @@ componentWillReceiveProps(props) {
               <Tag>Price: {this.state.currency} {this.state.productprice}</Tag>
             </View>
           </View>
+          {/* </Modal> */}
         </TouchableOpacity>
+
+        <View>
+          <Modal isVisible={this.state.isModalVisible} hasBackdrop={true} coverScreen={true} style={styles.modalcontainer}>
+            {/* <View style={{marginTop:100}}> */}
+              <View>
+                <Image style={styles.modalimage} source={{ uri: this.state.url }} />
+                {/* <TouchableOpacity
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  activeOpacity={0.7}
+                  onPress={() => this.state.liked ? this.unlike() : this.like()}
+                  style={styles.iconContainer}
+                > */}
+                  {/* <Animated.View style={{ transform: [{ scale: this.heartSize }] }}>
+                    <Ionicons
+                      name={(Platform.OS === 'ios' ? 'ios-heart' : 'md-heart') + (this.state.liked ? '' : '-empty')}
+                      size={32}
+                      color="#fff"
+                    />
+                  </Animated.View> */}
+                {/* </TouchableOpacity> */}
+              </View>
+              <Text style={styles.modaltitle}>{this.state.productname}</Text>
+              <Text style={styles.modaldescription}>{this.state.pricelevel} . {this.state.category}</Text>
+              <View style={styles.modaltagContainer}>
+                <Tag>25-35 min</Tag>
+                <Tag>4.6 (500+)</Tag>
+                <Tag>Price: {this.state.currency} {this.state.productprice}</Tag>
+              </View>
+              
+              <View style={styles.modalbuttons}>
+                <Button info style={styles.modalbutton1}>
+                  <Text style={styles.modaltext1}> 
+                    Add to Cart
+                  </Text>
+                </Button>
+
+                <Button info style={styles.modalbutton2} onPress={this.toggleModal}>
+                  <Text style={styles.modaltext2}> 
+                    Cancel
+                  </Text>
+                </Button>
+              </View>
+            {/* </View> */}
+          </Modal>
+        </View>
+
+      
+
       </View>
+
+      
     )
     }
   }
@@ -210,15 +274,76 @@ const styles = StyleSheet.create({
   container: {
     width: 320,
     backgroundColor: '#fff',
-    marginBottom: 10,
     padding: 10,
     shadowColor: 'rgba(0,0,0,0.1)',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 5
   },
+  modalcontainer: {
+    // width: 320,
+    backgroundColor: 'white',
+    marginBottom: 330,
+    marginTop: 150,
+    // marginVertical: 500,
+    padding: 10,
+    justifyContent: 'center'
+    // shadowColor: 'rgba(0,0,0,0.1)',
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 1,
+    // shadowRadius: 5
+  },
   image: {
     height: 150
+  },
+  modalimage: {
+    height: 150,
+    marginTop: -10
+  },
+  modaltagContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 5
+  },
+  modaltitle: {
+    fontSize: 16,
+    // marginTop: 10,
+    marginTop: 5
+  },
+  modaldescription: {
+    color: '#999',
+    marginTop: 5,
+    // marginTop: 10
+  },
+  modalbuttons: {
+    fontSize: 16,
+    // marginTop: 10,
+    marginTop: 20,
+    flexDirection: 'row',
+  },
+  modalbutton1: {
+    fontSize: 16,
+    width: 100,
+    marginLeft: 25
+  },
+  modaltext1: {
+    fontSize: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 10
+  },
+  modalbutton2: {
+    fontSize: 16,
+    width: 100,
+    marginRight: 10,
+    marginLeft: 50
+  },
+  modaltext2: {
+    fontSize: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 5,
+    marginLeft: 25
   },
   tagContainer: {
     flexDirection: 'row',
