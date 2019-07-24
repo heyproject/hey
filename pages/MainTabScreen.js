@@ -200,6 +200,7 @@ export default class MainTabScreen extends Component <Props> {
         itemsID: [],
         myfavitems: [],
         myfavitemsID: [],
+        myfavitemID: [],
         italianitems: [],
         italianitemsID: [],
         koreanitems: [],
@@ -249,7 +250,7 @@ export default class MainTabScreen extends Component <Props> {
                                                          that.props.navigation.navigate('Home');
                                                          }
                                                          });
-                                           
+                                        //    console.warn(user.uid);
                                            } else {
                                            // No user is signed in.
                                            that.props.navigation.navigate('Home');
@@ -301,10 +302,16 @@ export default class MainTabScreen extends Component <Props> {
                       
                       );
 
+                      const itemID = snapshot.docs.map(
+                        doc => doc.id,
+                        // photoID = i + 1, 
+                      );
+
                       this.setState({ myfavitems: items,
-                                      myfavitemsID: itemsID
+                                      myfavitemsID: itemsID,
+                                      myfavitemID: itemID
                       });
-                   
+                //    console.warn(itemID);
                   }
     };
         
@@ -547,25 +554,25 @@ export default class MainTabScreen extends Component <Props> {
                         <View style={{ paddingTop: 10 }}>
                             <CardList title={'My Favourites'}>
                                 <If condition={this.state.myfavitems.length > 0}>
-                                    <Card1 style={styles.card} a={this.state.myfavitems[0]}/>
+                                    <Card1 style={styles.card} a={this.state.myfavitems[0]} b={this.state.myfavitemID[0]}/>
                                 </If>
                                 <If condition={this.state.myfavitems.length > 1}>
-                                    <Card1 style={styles.card} a={this.state.myfavitems[1]}/>
+                                    <Card1 style={styles.card} a={this.state.myfavitems[1]} b={this.state.myfavitemID[1]}/>
                                 </If>
                                 <If condition={this.state.myfavitems.length > 2}>
-                                    <Card1 style={styles.card} a={this.state.myfavitems[2]}/>
+                                    <Card1 style={styles.card} a={this.state.myfavitems[2]} b={this.state.myfavitemID[2]}/>
                                 </If>
                                 <If condition={this.state.myfavitems.length > 3}>
-                                    <Card1 style={styles.card} a={this.state.myfavitems[3]}/>
+                                    <Card1 style={styles.card} a={this.state.myfavitems[3]} b={this.state.myfavitemID[3]}/>
                                 </If>
                                 <If condition={this.state.myfavitems.length > 4}>
-                                    <Card1 style={styles.card} a={this.state.myfavitems[4]}/>
+                                    <Card1 style={styles.card} a={this.state.myfavitems[4]} b={this.state.myfavitemID[4]}/>
                                 </If>
                                 <If condition={this.state.myfavitems.length > 5}>
-                                    <Card1 style={styles.card} a={this.state.myfavitems[5]}/>
+                                    <Card1 style={styles.card} a={this.state.myfavitems[5]} b={this.state.myfavitemID[5]}/>
                                 </If>
                                 <If condition={this.state.myfavitems.length > 6}>
-                                    <Card1 style={styles.card} a={this.state.myfavitems[6]}/>
+                                    <Card1 style={styles.card} a={this.state.myfavitems[6]} b={this.state.myfavitemID[6]}/>
                                 </If>
                             </CardList>
                             <CardList title={'Italian foods'}>

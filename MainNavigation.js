@@ -5,6 +5,7 @@ import SignUpPartOneScreen from './pages/SignUpPartOneScreen';
 import SignUpPartTwoScreen from './pages/SignUpPartTwoScreen';
 import MapScreen from './pages/MapScreen';
 import MainTabScreen from './pages/MainTabScreen';
+import MenuScreen from './components/Menu';
 import ProductSearchScreen from './pages/ProductSearchScreen';
 import JobHistoryScreen from './pages/JobHistoryScreen';
 import { createStackNavigator, createSwitchNavigator, createAppContainer } from 'react-navigation';
@@ -26,6 +27,7 @@ const AppNavigator = createSwitchNavigator({
   User: UserScreen,
   MapScreen: MapScreen,
   MainTab: MainTabScreen,
+  MenuScreen: MenuScreen,
   ProductSearchScreen: ProductSearchScreen,
   JobHistoryScreen: JobHistoryScreen,
 });

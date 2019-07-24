@@ -1,5 +1,6 @@
-import React from 'react'
-import { Platform, View, Text, TouchableOpacity, StyleSheet, Image, Animated } from 'react-native'
+// import React from 'react';
+import React, { Component } from 'react';
+import { Platform, View, Text, TouchableOpacity, StyleSheet, Image, Animated, StatusBar, TouchableHighlight } from 'react-native'
 import { withNavigation } from 'react-navigation'
 import Tag from './Tag'
 // import { Ionicons } from '@expo/vector-icons';
@@ -9,8 +10,10 @@ import { Container, Header, Content, Footer, FooterTab, Button, Icon, Badge, Lis
 
 // import {Fonts, Ionicons, Icons} from 'react-native-vector-icons';
 
-
-class Card extends React.Component {
+export default class MenuScreen extends Component <Props> {
+  static navigationOptions = {
+    title: 'MenuScreen',
+    };
   constructor(props) {
     super(props)
     this.heartSize = new Animated.Value(1);
@@ -157,21 +160,21 @@ componentWillReceiveProps(props) {
                       this.setState({ items: items,
                                       itemsID: itemsID
                       });
-                      // console.warn(this.props.a);
+                      // console.warn(this.props.navigation.state.params.items);
 
-                    this.setState({ productname: this.props.a.productname,
-                      productprice: this.props.a.price,
-                      currency: this.props.a.currency,
-                      category: this.props.a.productcategory,
-                      pricelevel: this.props.a.pricelevel,
-                      itemID: this.props.b
+                    this.setState({ productname: this.props.navigation.state.params.items.productname,
+                      productprice: this.props.navigation.state.params.items.price,
+                      currency: this.props.navigation.state.params.items.currency,
+                      category: this.props.navigation.state.params.items.productcategory,
+                      pricelevel: this.props.navigation.state.params.items.pricelevel,
+                      itemID: this.props.navigation.state.params.productID
                     });
                     
                     // console.warn(this.props.b);
                     var storage = firebase.storage();
                     // for (var i = 0; i <= itemsID.length - 1; i++) {
 
-                      refPath = storage.ref(this.props.a.imagepath);
+                      refPath = storage.ref(this.props.navigation.state.params.items.imagepath);
                       // console.warn(refPath);
                           refPath.getDownloadURL().then(data => {
                                 this.setState({ url: data}),
@@ -242,7 +245,7 @@ addtocart()
                 console.warn(ActiveCartFinal);
 
               } else {
-
+                
 
               }
 
@@ -267,28 +270,46 @@ addtocart()
 
 
   render() {
-    const currentUser = firebase.auth().currentUser;
+    
 
     if (this.state.url.length == 0) {
       return null
     }
     else {
 
-    // console.warn(items);
+    // console.warn(currentUser);
       // console.warn(this.state.url);
       // console.warn(this.state.productname);
     return (
-      <View style={this.props.style}>
-        <TouchableOpacity activeOpacity={0.7} /*onPress={this.toggleModal} */ 
-                      onPress= {() => this.props.navigation.navigate('MenuScreen', 
-                              { 
-                                user : currentUser,
-                                items : this.props.a,
-                                productID : this.state.itemID, 
-                                productname : this.state.productname, 
-                                productprice : this.state.productprice, 
-                                productcurrency : this.state.currency
-                                })}>
+      <Container>
+               <Header>
+                   <Left style={{left: 20}}>
+                      <TouchableHighlight
+                       onPress={() => this.TBD()}
+                       >
+                          <View style={{padding: 5, borderColor: 'black', borderRadius: 5,}}>
+                            <Text >
+                                TBD
+                            </Text>
+                            </View>
+                       </TouchableHighlight>
+                   </Left>
+                   <Body>
+                        <Title>Product Details</Title>
+                   </Body>
+                   <Right style={{right: 20}}>
+                        <Button hasText transparent
+                        onPress={() => this.getcart()}
+                        >
+                            <Text>
+                                Cart
+                            </Text>
+                        </Button>
+                   </Right>
+               </Header>
+      <Content>
+      <View>
+        <TouchableOpacity activeOpacity={0.7}>
         {/* <Modal isVisible={this.state.isModalVisible}> */}
           <View style={styles.container}>
             <View>
@@ -319,54 +340,56 @@ addtocart()
           {/* </Modal> */}
         </TouchableOpacity>
 
-        <View>
-          <Modal isVisible={this.state.isModalVisible} hasBackdrop={true} coverScreen={true} style={styles.modalcontainer}>
-            {/* <View style={{marginTop:100}}> */}
-              <View>
-                <Image style={styles.modalimage} source={{ uri: this.state.url }} />
-                {/* <TouchableOpacity
-                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                  activeOpacity={0.7}
-                  onPress={() => this.state.liked ? this.unlike() : this.like()}
-                  style={styles.iconContainer}
-                > */}
-                  {/* <Animated.View style={{ transform: [{ scale: this.heartSize }] }}>
-                    <Ionicons
-                      name={(Platform.OS === 'ios' ? 'ios-heart' : 'md-heart') + (this.state.liked ? '' : '-empty')}
-                      size={32}
-                      color="#fff"
-                    />
-                  </Animated.View> */}
-                {/* </TouchableOpacity> */}
-              </View>
-              <Text style={styles.modaltitle}>{this.state.productname}</Text>
-              <Text style={styles.modaldescription}>{this.state.pricelevel} . {this.state.category}</Text>
-              <View style={styles.modaltagContainer}>
-                <Tag>25-35 min</Tag>
-                <Tag>4.6 (500+)</Tag>
-                <Tag>Price: {this.state.currency} {this.state.productprice}</Tag>
-              </View>
-              
-              <View style={styles.modalbuttons}>
-                <Button info style={styles.modalbutton1} onPress={() => this.addtocart(this.state.itemID, this.state.productname, this.state.productprice, this.state.currency)}>
-                  <Text style={styles.modaltext1}> 
-                    Add to Cart
-                  </Text>
-                </Button>
-
-                <Button info style={styles.modalbutton2} onPress={this.toggleModal}>
-                  <Text style={styles.modaltext2}> 
-                    Cancel
-                  </Text>
-                </Button>
-              </View>
-            {/* </View> */}
-          </Modal>
-        </View>
+      
 
       
 
       </View>
+      </Content>
+
+      <View>
+               <Footer style={{bottom: 0, position: 'absolute'}}>
+                           <FooterTab>
+                               
+                               <Button active vertical>
+            
+               <Icon type="Entypo" name="home" 
+               onPress= {() => this.props.navigation.navigate('MainTabScreen', {
+                                user : currentUser, 
+                                })
+                        }/>
+                               <Text>Home</Text>
+                               </Button>
+
+                               <Button badge vertical>
+        
+                               <Badge><Text>2</Text></Badge>
+               <Icon type="FontAwesome" name="search" 
+               onPress= {() => this.props.navigation.navigate('ProductSearchScreen') }/>
+                               <Text>Search</Text>
+                               
+                               </Button>
+                               
+                               <Button vertical>
+            
+               <Icon type="Entypo" name="shopping-cart" 
+               onPress= {() => this.props.navigation.navigate('JobHistoryScreen') }/>
+                               <Text>Order History</Text>
+                               </Button>
+                               
+                               <Button vertical>
+         
+               <Icon type="MaterialCommunityIcons" name="account"
+               onPress= {() => this.props.navigation.navigate('MapScreen') }/>
+                               <Text>My Account</Text>
+               
+               
+                               </Button>
+                           </FooterTab>
+                       </Footer>
+               
+               </View>
+               </Container>
 
       
     )
@@ -374,17 +397,17 @@ addtocart()
   }
 }
 
-export default withNavigation(Card)
+// export default withNavigation(Card)
 
 const styles = StyleSheet.create({
   container: {
-    width: 320,
-    backgroundColor: '#fff',
-    padding: 10,
-    shadowColor: 'rgba(0,0,0,0.1)',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: 5
+    flex: 1,
+    backgroundColor: '#eee',
+    marginTop: StatusBar.currentHeight,
+    marginLeft: 10,
+    marginRight: 10,
+    padding: 5,
+    paddingTop: 20
   },
   modalcontainer: {
     // width: 320,
