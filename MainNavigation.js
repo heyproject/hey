@@ -6,9 +6,11 @@ import SignUpPartTwoScreen from './pages/SignUpPartTwoScreen';
 import MapScreen from './pages/MapScreen';
 import MainTabScreen from './pages/MainTabScreen';
 import MenuScreen from './components/Menu';
+import InfoScreen from './components/Info';
+import ReviewScreen from './components/Review';
 import ProductSearchScreen from './pages/ProductSearchScreen';
 import JobHistoryScreen from './pages/JobHistoryScreen';
-import { createStackNavigator, createSwitchNavigator, createAppContainer } from 'react-navigation';
+import { createBottomTabNavigator, createStackNavigator, createSwitchNavigator, createAppContainer } from 'react-navigation';
 
 const AuthenticationConfig = {
   headerMode: 'none',
@@ -30,6 +32,9 @@ const AppNavigator = createSwitchNavigator({
   MenuScreen: MenuScreen,
   ProductSearchScreen: ProductSearchScreen,
   JobHistoryScreen: JobHistoryScreen,
+  ReviewScreen : ReviewScreen,
+  InfoScreen : InfoScreen,
 });
+
 
 export default createAppContainer(AppNavigator);

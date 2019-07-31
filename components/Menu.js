@@ -1,14 +1,21 @@
 // import React from 'react';
 import React, { Component } from 'react';
-import { Platform, View, Text, TouchableOpacity, StyleSheet, Image, Animated, StatusBar, TouchableHighlight } from 'react-native'
-import { withNavigation } from 'react-navigation'
-import Tag from './Tag'
+import { Platform, View, Text, TouchableOpacity, StyleSheet, Image, Animated, StatusBar, TouchableHighlight, ScrollView } from 'react-native'
+import { createBottomTabNavigator, createAppContainer, withNavigationFocus } from 'react-navigation'
+import Tag from './Tag';
+import Tab1 from './Review';
+import Tab2 from './Info';
 // import { Ionicons } from '@expo/vector-icons';
 import * as firebase from 'react-native-firebase';
 import Modal from "react-native-modal";
-import { Container, Header, Content, Footer, FooterTab, Button, Icon, Badge, ListItem, Left, Right, Body, List, Title} from 'native-base';
+import { Container, Header, Content, Footer, FooterTab, Button, Icon, Badge, ListItem, Left, Right, Body, List, Title, Card, CardItem, Segment, Tabs, Tab, TabHeading} from 'native-base';
 
 // import {Fonts, Ionicons, Icons} from 'react-native-vector-icons';
+
+import Card1 from '../components/Cardsimilar'
+import CardList from '../components/CardList'
+
+
 
 export default class MenuScreen extends Component <Props> {
   static navigationOptions = {
@@ -47,6 +54,8 @@ export default class MenuScreen extends Component <Props> {
     category: "",
     pricelevel: "",
     isModalVisible: false,
+    comments: "",
+    activePage:1,
     };
 
     
@@ -91,22 +100,30 @@ export default class MenuScreen extends Component <Props> {
 
    this.setState({ isMounted: true });
 
-
+   this.getmyfavProduct();
 
 
    this.getProduct();
+  //  console.warn(this.state.itemID, this.state.productname);
+      // console.warn(this.props.navigation.state.params);
 
+      this.didFocusListener = this.props.navigation.addListener(
+        'didFocus',
+        () => { console.log('did focus') },
+      );
    
 }
 
 componentWillUnmount() {
-    this.setState({ isMounted: false })
+    this.setState({ isMounted: false });
+    console.warn(1);
+    this.didFocusListener.remove();
 }
 
 componentWillReceiveProps(props) {
     this.props = props
     if (this.props.refresh == true) {
-
+      // console.warn(2);
     }
 }
 
@@ -129,6 +146,14 @@ componentWillReceiveProps(props) {
     // console.warn(this.state.isModalVisible);
   };
 
+  selectComponent = (activePage) => () => this.setState({activePage});
+
+  _renderComponent = () => {
+    if(this.state.activePage === 1)
+      return <Tab1/> //... Your Component 1 to display
+    else 
+      return <Tab2/> //... Your Component 2 to display
+  };
 
   async getProduct()
     { var that = this;
@@ -139,9 +164,10 @@ componentWillReceiveProps(props) {
       // var i = 0;
       // var photoID = 0;
 
+
       const db = firebase.firestore();
             db.settings({ timestampsInSnapshots: true});
-                    const query = db.collection('Products').where('available', '==', 'Y').limit(10);
+                    const query = db.collection('Productcomments').where('productID', '==', this.props.navigation.state.params.productID);
                     const snapshot = await query.get();
 
                     const items = snapshot.docs.map(
@@ -151,23 +177,25 @@ componentWillReceiveProps(props) {
                     
                     // photoID = i + 1;
 
-                    // const itemsID = snapshot.docs.map(doc => doc.id);
+                    const itemsID = snapshot.docs.map(doc => doc.id);
                     var itemsID = snapshot.docs.map(
-                      doc => doc.data().imagepath,
+                      doc => doc.id,
                       
                       );
 
                       this.setState({ items: items,
                                       itemsID: itemsID
                       });
-                      // console.warn(this.props.navigation.state.params.items);
+                      // console.warn(this.props.navigation.state);
+                      // console.warn(this.props.navigation.state.params);
 
                     this.setState({ productname: this.props.navigation.state.params.items.productname,
                       productprice: this.props.navigation.state.params.items.price,
                       currency: this.props.navigation.state.params.items.currency,
                       category: this.props.navigation.state.params.items.productcategory,
                       pricelevel: this.props.navigation.state.params.items.pricelevel,
-                      itemID: this.props.navigation.state.params.productID
+                      itemID: this.props.navigation.state.params.productID,
+                      comments: this.props.navigation.state.params.items.comments,
                     });
                     
                     // console.warn(this.props.b);
@@ -184,6 +212,41 @@ componentWillReceiveProps(props) {
                           })
                       // }  
               }
+    };
+
+    async getmyfavProduct()
+    { 
+      if (this.state.mounted == true) {
+      const db = firebase.firestore();
+            db.settings({ timestampsInSnapshots: true});
+                    const query = db.collection('Products').where('available', '==', 'Y').where('productcategory', '==',this.props.navigation.state.params.items.productcategory).limit(10);
+                    const snapshot = await query.get();
+
+                    const items = snapshot.docs.map(
+                      doc => doc.data(),
+                      // photoID = i + 1, 
+                    );
+                    
+                    // photoID = i + 1;
+                        console.warn(this.props.navigation.state.params.items);
+                    // const itemsID = snapshot.docs.map(doc => doc.id);
+                    var itemsID = snapshot.docs.map(
+                      doc => doc.data().imagepath,
+                      
+                      );
+
+                      const itemID = snapshot.docs.map(
+                        doc => doc.id,
+                        // photoID = i + 1, 
+                      );
+
+                      this.setState({ myfavitems: items,
+                                      myfavitemsID: itemsID,
+                                      myfavitemID: itemID
+                      });
+                  //  console.warn(this.state.myfavitems.length);
+                  //  console.warn(this.state.myfavitemID.length);
+                  }
     };
     
 addtocart()
@@ -270,7 +333,7 @@ addtocart()
 
 
   render() {
-    
+    const currentUser = firebase.auth().currentUser;
 
     if (this.state.url.length == 0) {
       return null
@@ -281,11 +344,11 @@ addtocart()
       // console.warn(this.state.url);
       // console.warn(this.state.productname);
     return (
-      <Container>
+      <Container >
                <Header>
                    <Left style={{left: 20}}>
                       <TouchableHighlight
-                       onPress={() => this.TBD()}
+                       onPress={() => this.props.navigation.navigate('MainTabScreen')}
                        >
                           <View style={{padding: 5, borderColor: 'black', borderRadius: 5,}}>
                             <Text >
@@ -295,75 +358,118 @@ addtocart()
                        </TouchableHighlight>
                    </Left>
                    <Body>
-                        <Title>Product Details</Title>
+                        <Title style={{ fontSize: 15 }}>Product Details</Title>
                    </Body>
                    <Right style={{right: 20}}>
                         <Button hasText transparent
                         onPress={() => this.getcart()}
                         >
-                            <Text>
-                                Cart
-                            </Text>
+                            <Icon type="Entypo" name="shopping-cart" style={{ fontSize: 15 }}>
+                        
+                            </Icon>    
                         </Button>
                    </Right>
                </Header>
-      <Content>
-      <View>
-        <TouchableOpacity activeOpacity={0.7}>
-        {/* <Modal isVisible={this.state.isModalVisible}> */}
-          <View style={styles.container}>
+            <Content >
+            <View >
+              <TouchableOpacity activeOpacity={0.7}>
+              {/* <Modal isVisible={this.state.isModalVisible}> */}
+                <View style={styles.container}>
+                  <View>
+                    <Image style={styles.image} source={{ uri: this.state.url }} />
+                    {/* <TouchableOpacity
+                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                      activeOpacity={0.7}
+                      onPress={() => this.state.liked ? this.unlike() : this.like()}
+                      style={styles.iconContainer}
+                    > */}
+                      {/* <Animated.View style={{ transform: [{ scale: this.heartSize }] }}>
+                        <Ionicons
+                          name={(Platform.OS === 'ios' ? 'ios-heart' : 'md-heart') + (this.state.liked ? '' : '-empty')}
+                          size={32}
+                          color="#fff"
+                        />
+                      </Animated.View> */}
+                    {/* </TouchableOpacity> */}
+                  </View>
+                  <Text style={styles.title}>{this.state.productname}</Text>
+                  <Text style={styles.description}>{this.state.pricelevel} . {this.state.category}</Text>
+                  <View style={styles.tagContainer}>
+                    <Tag>25-35 min</Tag>
+                    <Tag>4.6 (500+)</Tag>
+                    <Tag>Price: {this.state.currency} {this.state.productprice}</Tag>
+                  </View>
+                </View>
+                {/* </Modal> */}
+              </TouchableOpacity>
+            
+
+            <Container style={styles.tabcontainer}>
+            {/* <Body > */}
+              <Segment style={{Left: 0, Right: 0}}>
+                <Button active={this.state.activePage === 1} style={{Left: 0, width: 175, justifyContent: 'center',}}
+                    onPress={this.selectComponent(1)}><Text>Review</Text></Button>
+                <Button  active={this.state.activePage === 2} style={{Right: 0, width: 175, justifyContent: 'center',}}
+                    onPress= {this.selectComponent(2)}><Text>Info</Text></Button>
+              </Segment>
+              {/* </Body> */}
+            <Content padder style={{marginTop: -20}}>
+              {this._renderComponent()}
+            </Content>
+            </Container>
+            
+            <Container style={{marginTop: -650, }}>
+            <View style={styles.scrollcontainer}>
+                    <ScrollView style={styles.scrollViewContainer}>
+                        <View style={{ paddingTop: 5, color: '#eee', }}>
+                            <CardList title={'Similar Menu'} style={{color: '#eee',}}>
+                                <If condition={this.state.myfavitems.length > 0}>
+                                    <Card1 style={styles.card} a={this.state.myfavitems[0]} b={this.state.myfavitemID[0]}/>
+                                </If>
+                                <If condition={this.state.myfavitems.length > 1}>
+                                    <Card1 style={styles.card} a={this.state.myfavitems[1]} b={this.state.myfavitemID[1]}/>
+                                </If>
+                                <If condition={this.state.myfavitems.length > 2}>
+                                    <Card1 style={styles.card} a={this.state.myfavitems[2]} b={this.state.myfavitemID[2]}/>
+                                </If>
+                                <If condition={this.state.myfavitems.length > 3}>
+                                    <Card1 style={styles.card} a={this.state.myfavitems[3]} b={this.state.myfavitemID[3]}/>
+                                </If>
+                                <If condition={this.state.myfavitems.length > 4}>
+                                    <Card1 style={styles.card} a={this.state.myfavitems[4]} b={this.state.myfavitemID[4]}/>
+                                </If>
+                                <If condition={this.state.myfavitems.length > 5}>
+                                    <Card1 style={styles.card} a={this.state.myfavitems[5]} b={this.state.myfavitemID[5]}/>
+                                </If>
+                                <If condition={this.state.myfavitems.length > 6}>
+                                    <Card1 style={styles.card} a={this.state.myfavitems[6]} b={this.state.myfavitemID[6]}/>
+                                </If>
+                            </CardList>
+                            </View>
+                    </ScrollView>
+            </View>
+            </Container>
+            
+
+            </View>
+            </Content>
+
             <View>
-              <Image style={styles.image} source={{ uri: this.state.url }} />
-              {/* <TouchableOpacity
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                activeOpacity={0.7}
-                onPress={() => this.state.liked ? this.unlike() : this.like()}
-                style={styles.iconContainer}
-              > */}
-                {/* <Animated.View style={{ transform: [{ scale: this.heartSize }] }}>
-                  <Ionicons
-                    name={(Platform.OS === 'ios' ? 'ios-heart' : 'md-heart') + (this.state.liked ? '' : '-empty')}
-                    size={32}
-                    color="#fff"
-                  />
-                </Animated.View> */}
-              {/* </TouchableOpacity> */}
-            </View>
-            <Text style={styles.title}>{this.state.productname}</Text>
-            <Text style={styles.description}>{this.state.pricelevel} . {this.state.category}</Text>
-            <View style={styles.tagContainer}>
-              <Tag>25-35 min</Tag>
-              <Tag>4.6 (500+)</Tag>
-              <Tag>Price: {this.state.currency} {this.state.productprice}</Tag>
-            </View>
-          </View>
-          {/* </Modal> */}
-        </TouchableOpacity>
-
-      
-
-      
-
-      </View>
-      </Content>
-
-      <View>
                <Footer style={{bottom: 0, position: 'absolute'}}>
                            <FooterTab>
                                
-                               <Button active vertical>
+                               <Button vertical>
             
                <Icon type="Entypo" name="home" 
-               onPress= {() => this.props.navigation.navigate('MainTabScreen', {
+               onPress= {() => this.props.navigation.navigate('MainTab', {
                                 user : currentUser, 
                                 })
                         }/>
                                <Text>Home</Text>
                                </Button>
 
-                               <Button badge vertical>
+                               <Button vertical>
         
-                               <Badge><Text>2</Text></Badge>
                <Icon type="FontAwesome" name="search" 
                onPress= {() => this.props.navigation.navigate('ProductSearchScreen') }/>
                                <Text>Search</Text>
@@ -397,98 +503,79 @@ addtocart()
   }
 }
 
+
 // export default withNavigation(Card)
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: '#eee',
     marginTop: StatusBar.currentHeight,
-    marginLeft: 10,
-    marginRight: 10,
+    marginLeft: 0,
+    marginRight: 0,
     padding: 5,
-    paddingTop: 20
+    paddingTop: 15
   },
-  modalcontainer: {
-    // width: 320,
-    backgroundColor: 'white',
-    marginBottom: 330,
-    marginTop: 150,
-    // marginVertical: 500,
-    padding: 10,
-    justifyContent: 'center'
-    // shadowColor: 'rgba(0,0,0,0.1)',
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 1,
-    // shadowRadius: 5
+  scrollcontainer: {
+    flex: 1,
+    backgroundColor: '#eee',
+    // marginTop: StatusBar.currentHeight,
+    marginLeft: 0,
+    marginRight: 0,
+    padding: 5,
+    paddingTop: 15
+  },
+  card: {
+    marginRight: 10,
+    // backgroundColor: '#eee',
+  },
+  tabcontainer: {
+    flex: 1,
+    backgroundColor: '#eee',
+    // marginTop: StatusBar.currentHeight,
+    marginLeft: 0,
+    marginRight: 0,
+    padding: 0,
+    paddingTop: 15
   },
   image: {
-    height: 150
-  },
-  modalimage: {
-    height: 150,
-    marginTop: -10
-  },
-  modaltagContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 5
-  },
-  modaltitle: {
-    fontSize: 16,
-    // marginTop: 10,
-    marginTop: 5
-  },
-  modaldescription: {
-    color: '#999',
-    marginTop: 5,
-    // marginTop: 10
-  },
-  modalbuttons: {
-    fontSize: 16,
-    // marginTop: 10,
-    marginTop: 20,
-    flexDirection: 'row',
-  },
-  modalbutton1: {
-    fontSize: 16,
-    width: 100,
-    marginLeft: 25
-  },
-  modaltext1: {
-    fontSize: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 10
-  },
-  modalbutton2: {
-    fontSize: 16,
-    width: 100,
+    height: 200,
+    // width: 350,
+    marginTop: 0,
+    marginLeft: 10,
     marginRight: 10,
-    marginLeft: 50
-  },
-  modaltext2: {
-    fontSize: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 5,
-    marginLeft: 25
+    shadowColor: 'rgba(0,0,0,0.1)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 5,
+    paddingTop: 10,
+    paddingLeft: 10,
+    paddingRight: 10
   },
   tagContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    marginLeft: 8
   },
   title: {
     fontSize: 16,
-    marginTop: 10
+    marginTop: 10,
+    marginLeft: 10
   },
   description: {
     color: '#999',
-    marginTop: 5
+    marginTop: 5,
+    marginLeft: 10
   },
   iconContainer: {
     position: 'absolute',
     right: 20,
-    bottom: 15
-  }
+    bottom: 15,
+    marginLeft: 10
+  },
+  scrollViewContainer: {
+    flex: 1,
+    backgroundColor: '#eee',
+    marginTop: 0,
+  },
 })

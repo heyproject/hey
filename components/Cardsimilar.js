@@ -12,7 +12,16 @@ import { Container, Header, Content, Footer, FooterTab, Button, Icon, Badge, Lis
 
 class Card extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
+    console.log("MenuScreen constructor start");
+        this.didFocusListener = this.props.navigation.addListener(
+		'didFocus',
+		(obj) => {console.log("DetailsScreen didFocus start")}
+	);
+	this.didBlurListener = this.props.navigation.addListener(
+		'didBlur',
+		(obj) => {console.log('DetailsScreen didBlur start')}
+	);
     this.heartSize = new Animated.Value(1);
     this.state = {
       liked: false,
@@ -52,6 +61,8 @@ class Card extends React.Component {
   componentDidMount() {
     var that = this;
     
+    console.log("MenuScreen componentDidMount start");
+
     firebase.auth().onAuthStateChanged(function(user) {
                                        if (user) {
                                         // const userID = user.uid;
@@ -97,13 +108,16 @@ class Card extends React.Component {
 }
 
 componentWillUnmount() {
-    this.setState({ isMounted: false })
+    this.setState({ isMounted: false });
+    console.log("MenuScreen componentWillUnmount start")
+    this.didFocusListener.remove();
+	  this.didBlurListener.remove();
 }
 
 componentWillReceiveProps(props) {
     this.props = props
     if (this.props.refresh == true) {
-      // console.warn(9);
+
     }
 }
 
@@ -138,7 +152,7 @@ componentWillReceiveProps(props) {
 
       const db = firebase.firestore();
             db.settings({ timestampsInSnapshots: true});
-                    const query = db.collection('Products').where('available', '==', 'Y').limit(10);
+                    const query = db.collection('Products').limit(10);
                     const snapshot = await query.get();
 
                     const items = snapshot.docs.map(
@@ -157,7 +171,7 @@ componentWillReceiveProps(props) {
                       this.setState({ items: items,
                                       itemsID: itemsID
                       });
-                      // console.warn(this.props.a);
+                      
 
                     this.setState({ productname: this.props.a.productname,
                       productprice: this.props.a.price,
@@ -167,7 +181,7 @@ componentWillReceiveProps(props) {
                       itemID: this.props.b
                     });
                     
-                    // console.warn(this.props.b);
+                    console.warn(this.props.a);
                     var storage = firebase.storage();
                     // for (var i = 0; i <= itemsID.length - 1; i++) {
 
@@ -270,28 +284,32 @@ addtocart()
 
   render() {
     const currentUser = firebase.auth().currentUser;
+    const {navigation} = this.props;
+    // const itemId = navigation.getParam('itemId', 'no-values');
+    // const otherParam = navigation.getParam('otherParam', 'no-values');
 
     if (this.state.url.length == 0) {
       return null
     }
     else {
-
-    // console.warn(items);
-      // console.warn(this.state.url);
+// console.warn(this.state.url);
+    // console.warn(this.state.itemID, this.state.productname);
+    //   console.warn(this.props.a);
       // console.warn(this.state.productname);
     return (
       <View style={this.props.style}>
         <TouchableOpacity activeOpacity={0.7} /*onPress={this.toggleModal} */ 
-                      onPress= {() => this.props.navigation.navigate('MenuScreen', 
-                              { 
-                                user : currentUser,
-                                items : this.props.a,
-                                productID : this.state.itemID, 
-                                productname : this.state.productname, 
-                                productprice : this.state.productprice, 
-                                productcurrency : this.state.currency
-                                },
-                                'MenuScreen' + 2)}>
+                      onPress= {() => this.props.navigation.push('MenuScreen', 
+                            { 
+                              user : currentUser,
+                              items : this.props.a,
+                              productID : this.state.itemID, 
+                              productname : this.state.productname, 
+                              productprice : this.state.productprice, 
+                              productcurrency : this.state.currency
+                              },
+                              'MenuScreen' + 1)}
+                              >
         {/* <Modal isVisible={this.state.isModalVisible}> */}
           <View style={styles.container}>
             <View>
@@ -322,50 +340,7 @@ addtocart()
           {/* </Modal> */}
         </TouchableOpacity>
 
-        <View>
-          <Modal isVisible={this.state.isModalVisible} hasBackdrop={true} coverScreen={true} style={styles.modalcontainer}>
-            {/* <View style={{marginTop:100}}> */}
-              <View>
-                <Image style={styles.modalimage} source={{ uri: this.state.url }} />
-                {/* <TouchableOpacity
-                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                  activeOpacity={0.7}
-                  onPress={() => this.state.liked ? this.unlike() : this.like()}
-                  style={styles.iconContainer}
-                > */}
-                  {/* <Animated.View style={{ transform: [{ scale: this.heartSize }] }}>
-                    <Ionicons
-                      name={(Platform.OS === 'ios' ? 'ios-heart' : 'md-heart') + (this.state.liked ? '' : '-empty')}
-                      size={32}
-                      color="#fff"
-                    />
-                  </Animated.View> */}
-                {/* </TouchableOpacity> */}
-              </View>
-              <Text style={styles.modaltitle}>{this.state.productname}</Text>
-              <Text style={styles.modaldescription}>{this.state.pricelevel} . {this.state.category}</Text>
-              <View style={styles.modaltagContainer}>
-                <Tag>25-35 min</Tag>
-                <Tag>4.6 (500+)</Tag>
-                <Tag>Price: {this.state.currency} {this.state.productprice}</Tag>
-              </View>
-              
-              <View style={styles.modalbuttons}>
-                <Button info style={styles.modalbutton1} onPress={() => this.addtocart(this.state.itemID, this.state.productname, this.state.productprice, this.state.currency)}>
-                  <Text style={styles.modaltext1}> 
-                    Add to Cart
-                  </Text>
-                </Button>
-
-                <Button info style={styles.modalbutton2} onPress={this.toggleModal}>
-                  <Text style={styles.modaltext2}> 
-                    Cancel
-                  </Text>
-                </Button>
-              </View>
-            {/* </View> */}
-          </Modal>
-        </View>
+        
 
       
 
@@ -382,12 +357,26 @@ export default withNavigation(Card)
 const styles = StyleSheet.create({
   container: {
     width: 320,
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
+    backgroundColor: '#eee',
     padding: 10,
     shadowColor: 'rgba(0,0,0,0.1)',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 5
+  },
+  modalcontainer: {
+    // width: 320,
+    backgroundColor: 'white',
+    marginBottom: 0,
+    // marginTop: 150,
+    // marginVertical: 500,
+    padding: 10,
+    justifyContent: 'center'
+    // shadowColor: 'rgba(0,0,0,0.1)',
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 1,
+    // shadowRadius: 5
   },
   image: {
     height: 150
@@ -414,7 +403,7 @@ const styles = StyleSheet.create({
   modalbuttons: {
     fontSize: 16,
     // marginTop: 10,
-    marginTop: 20,
+    // marginTop: 20,
     flexDirection: 'row',
   },
   modalbutton1: {

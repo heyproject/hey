@@ -270,13 +270,14 @@ export default class MainTabScreen extends Component <Props> {
     }
     
     componentWillUnmount() {
-        this.setState({ isMounted: false })
+        this.setState({ isMounted: false });
+        // console.warn(1);
     }
 
     componentWillReceiveProps(props) {
         this.props = props
         if (this.props.refresh == true) {
-
+            console.warn(2);
         }
     }
 
@@ -422,7 +423,7 @@ export default class MainTabScreen extends Component <Props> {
     
     render() {
         const {leftActionActivated, toggle} = this.state;
-        // console.warn(this.state.items);
+        // console.warn(this.props.navigation.state);
 
         if (this.state.myfavitems.length == 0 ) {
             return null
@@ -672,9 +673,8 @@ export default class MainTabScreen extends Component <Props> {
                                <Text>Home</Text>
                                </Button>
 
-                               <Button badge vertical>
+                               <Button vertical>
         
-                               <Badge><Text>2</Text></Badge>
                <Icon type="FontAwesome" name="search" 
                onPress= {() => this.props.navigation.navigate('ProductSearchScreen') }/>
                                <Text>Search</Text>
