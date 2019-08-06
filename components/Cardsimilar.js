@@ -1,6 +1,6 @@
 import React from 'react'
 import { Platform, View, Text, TouchableOpacity, StyleSheet, Image, Animated } from 'react-native'
-import { withNavigation } from 'react-navigation'
+import { withNavigation} from 'react-navigation'
 import Tag from './Tag'
 // import { Ionicons } from '@expo/vector-icons';
 import * as firebase from 'react-native-firebase';
@@ -13,14 +13,14 @@ import { Container, Header, Content, Footer, FooterTab, Button, Icon, Badge, Lis
 class Card extends React.Component {
   constructor(props) {
     super(props);
-    console.log("MenuScreen constructor start");
-        this.didFocusListener = this.props.navigation.addListener(
+    console.log("CardSimilarScreen constructor start");
+  this.didFocusListener = this.props.navigation.addListener(
 		'didFocus',
-		(obj) => {console.log("DetailsScreen didFocus start")}
+		(obj) => {console.log("CardSimilarScreen didFocus start")}
 	);
 	this.didBlurListener = this.props.navigation.addListener(
 		'didBlur',
-		(obj) => {console.log('DetailsScreen didBlur start')}
+		(obj) => {console.log('CardSimilarScreen didBlur start')}
 	);
     this.heartSize = new Animated.Value(1);
     this.state = {
@@ -181,7 +181,7 @@ componentWillReceiveProps(props) {
                       itemID: this.props.b
                     });
                     
-                    console.warn(this.props.a);
+                    // console.warn(this.props.a);
                     var storage = firebase.storage();
                     // for (var i = 0; i <= itemsID.length - 1; i++) {
 
@@ -191,11 +191,12 @@ componentWillReceiveProps(props) {
                                 this.setState({ url: data}),
                                 this.setState({ loading: false });
                             }).catch(function(error) {
-                              console.warn(error);
+                              console.log(error);
                           })
                       // }  
-                      // console.warn(this.props.a.imagepath);
-                      // console.warn(this.state.url);
+                      // console.warn(this.state.itemID);
+                      // console.warn(this.props.a);
+                      // console.warn(this.props.navigation.state);
               }
     };
     
@@ -255,7 +256,7 @@ addtocart()
                 // console.warn(product);
                 // console.warn(productfinal);
                 // console.warn(product.includes(doc.data().product[0]));
-                console.warn(ActiveCartFinal);
+                // console.warn(ActiveCartFinal);
 
               } else {
 
@@ -287,6 +288,8 @@ addtocart()
     const {navigation} = this.props;
     // const itemId = navigation.getParam('itemId', 'no-values');
     // const otherParam = navigation.getParam('otherParam', 'no-values');
+    // console.warn(this.props.a);
+    // console.warn(this.state.productname);
 
     if (this.state.url.length == 0) {
       return null
@@ -298,50 +301,93 @@ addtocart()
       // console.warn(this.state.productname);
     return (
       <View style={this.props.style}>
-        <TouchableOpacity activeOpacity={0.7} /*onPress={this.toggleModal} */ 
-                      onPress= {() => this.props.navigation.push('MenuScreen', 
-                            { 
-                              user : currentUser,
-                              items : this.props.a,
-                              productID : this.state.itemID, 
-                              productname : this.state.productname, 
-                              productprice : this.state.productprice, 
-                              productcurrency : this.state.currency
-                              },
-                              'MenuScreen' + 1)}
-                              >
-        {/* <Modal isVisible={this.state.isModalVisible}> */}
-          <View style={styles.container}>
-            <View>
-              <Image style={styles.image} source={{ uri: this.state.url }} />
-              {/* <TouchableOpacity
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                activeOpacity={0.7}
-                onPress={() => this.state.liked ? this.unlike() : this.like()}
-                style={styles.iconContainer}
-              > */}
-                {/* <Animated.View style={{ transform: [{ scale: this.heartSize }] }}>
-                  <Ionicons
-                    name={(Platform.OS === 'ios' ? 'ios-heart' : 'md-heart') + (this.state.liked ? '' : '-empty')}
-                    size={32}
-                    color="#fff"
-                  />
-                </Animated.View> */}
-              {/* </TouchableOpacity> */}
+        <If condition={this.props.navigation.state.routeName == 'MenuScreen'}>
+          <TouchableOpacity activeOpacity={0.7} /*onPress={this.toggleModal} */ 
+                        onPress= {() => this.props.navigation.navigate({routeName: 'MenuScreen2', 
+                              params: { 
+                                user : currentUser,
+                                items : this.props.a,
+                                productID : this.state.itemID, 
+                                productname : this.state.productname, 
+                                productprice : this.state.productprice, 
+                                productcurrency : this.state.currency
+                                },
+                                key: 'MenuScreen2' + Math.round(Math.random()*100)})}
+                                >
+          {/* <Modal isVisible={this.state.isModalVisible}> */}
+            <View style={styles.container}>
+              <View>
+                <Image style={styles.image} source={{ uri: this.state.url }} />
+                {/* <TouchableOpacity
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  activeOpacity={0.7}
+                  onPress={() => this.state.liked ? this.unlike() : this.like()}
+                  style={styles.iconContainer}
+                > */}
+                  {/* <Animated.View style={{ transform: [{ scale: this.heartSize }] }}>
+                    <Ionicons
+                      name={(Platform.OS === 'ios' ? 'ios-heart' : 'md-heart') + (this.state.liked ? '' : '-empty')}
+                      size={32}
+                      color="#fff"
+                    />
+                  </Animated.View> */}
+                {/* </TouchableOpacity> */}
+              </View>
+              <Text style={styles.title}>{this.state.productname}</Text>
+              <Text style={styles.description}>{this.state.pricelevel} . {this.state.category}</Text>
+              <View style={styles.tagContainer}>
+                <Tag>25-35 min</Tag>
+                <Tag>4.6 (500+)</Tag>
+                <Tag>Price: {this.state.currency} {this.state.productprice}</Tag>
+              </View>
             </View>
-            <Text style={styles.title}>{this.state.productname}</Text>
-            <Text style={styles.description}>{this.state.pricelevel} . {this.state.category}</Text>
-            <View style={styles.tagContainer}>
-              <Tag>25-35 min</Tag>
-              <Tag>4.6 (500+)</Tag>
-              <Tag>Price: {this.state.currency} {this.state.productprice}</Tag>
-            </View>
-          </View>
-          {/* </Modal> */}
-        </TouchableOpacity>
-
+            {/* </Modal> */}
+          </TouchableOpacity>
+        </If>
         
-
+        <If condition={this.props.navigation.state.routeName == 'MenuScreen2'}>
+          <TouchableOpacity activeOpacity={0.7} /*onPress={this.toggleModal} */ 
+                        onPress= {() => this.props.navigation.navigate({routeName: 'MenuScreen', 
+                              params: { 
+                                user : currentUser,
+                                items : this.props.a,
+                                productID : this.state.itemID, 
+                                productname : this.state.productname, 
+                                productprice : this.state.productprice, 
+                                productcurrency : this.state.currency
+                                },
+                                key: 'MenuScreen' + Math.round(Math.random()*100)})}
+                                >
+          {/* <Modal isVisible={this.state.isModalVisible}> */}
+            <View style={styles.container}>
+              <View>
+                <Image style={styles.image} source={{ uri: this.state.url }} />
+                {/* <TouchableOpacity
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  activeOpacity={0.7}
+                  onPress={() => this.state.liked ? this.unlike() : this.like()}
+                  style={styles.iconContainer}
+                > */}
+                  {/* <Animated.View style={{ transform: [{ scale: this.heartSize }] }}>
+                    <Ionicons
+                      name={(Platform.OS === 'ios' ? 'ios-heart' : 'md-heart') + (this.state.liked ? '' : '-empty')}
+                      size={32}
+                      color="#fff"
+                    />
+                  </Animated.View> */}
+                {/* </TouchableOpacity> */}
+              </View>
+              <Text style={styles.title}>{this.state.productname}</Text>
+              <Text style={styles.description}>{this.state.pricelevel} . {this.state.category}</Text>
+              <View style={styles.tagContainer}>
+                <Tag>25-35 min</Tag>
+                <Tag>4.6 (500+)</Tag>
+                <Tag>Price: {this.state.currency} {this.state.productprice}</Tag>
+              </View>
+            </View>
+            {/* </Modal> */}
+          </TouchableOpacity>
+        </If>
       
 
       </View>

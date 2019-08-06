@@ -153,9 +153,10 @@ componentWillReceiveProps(props) {
                       currency: this.props.a.currency,
                       category: this.props.a.productcategory,
                       pricelevel: this.props.a.pricelevel,
+                      itemID: this.props.b
                     });
                     
-                    // console.warn(itemsID[this.props.a]);
+                    // console.warn(this.props.b);
                     var storage = firebase.storage();
                     // for (var i = 0; i <= itemsID.length - 1; i++) {
 
@@ -173,6 +174,7 @@ componentWillReceiveProps(props) {
 
 
   render() {
+    const currentUser = firebase.auth().currentUser;
 
     if (this.state.url.length == 0) {
       return null
@@ -182,7 +184,17 @@ componentWillReceiveProps(props) {
       // console.warn(this.state.productname);
     return (
       <View style={this.props.style}>
-        <TouchableOpacity activeOpacity={0.7} onPress={this.toggleModal} >
+        <TouchableOpacity activeOpacity={0.7} /*onPress={this.toggleModal} */ 
+                      onPress= {() => this.props.navigation.navigate({routeName: 'MenuScreen', 
+                      params: { 
+                        user : currentUser,
+                        items : this.props.a,
+                        productID : this.state.itemID, 
+                        productname : this.state.productname, 
+                        productprice : this.state.productprice, 
+                        productcurrency : this.state.currency
+                        },
+                        key: 'MenuScreen' + Math.round(Math.random()*100)})}>
         {/* <Modal isVisible={this.state.isModalVisible}> */}
           <View style={styles.container}>
             <View>
@@ -242,7 +254,7 @@ componentWillReceiveProps(props) {
               </View>
               
               <View style={styles.modalbuttons}>
-                <Button info style={styles.modalbutton1}>
+                <Button info style={styles.modalbutton1} onPress={() => this.addtocart(this.state.itemID, this.state.productname, this.state.productprice, this.state.currency)}>
                   <Text style={styles.modaltext1}> 
                     Add to Cart
                   </Text>

@@ -6,6 +6,7 @@ import SignUpPartTwoScreen from './pages/SignUpPartTwoScreen';
 import MapScreen from './pages/MapScreen';
 import MainTabScreen from './pages/MainTabScreen';
 import MenuScreen from './components/Menu';
+import MenuScreen2 from './components/Menu2';
 import InfoScreen from './components/Info';
 import ReviewScreen from './components/Review';
 import ProductSearchScreen from './pages/ProductSearchScreen';
@@ -30,6 +31,7 @@ const AppNavigator = createSwitchNavigator({
   MapScreen: MapScreen,
   MainTab: MainTabScreen,
   MenuScreen: MenuScreen,
+  MenuScreen2: MenuScreen2,
   ProductSearchScreen: ProductSearchScreen,
   JobHistoryScreen: JobHistoryScreen,
   ReviewScreen : ReviewScreen,

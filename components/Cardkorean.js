@@ -18,6 +18,7 @@ class Card extends React.Component {
       liked: false,
     
     user: "",
+    userID: "",
     JobData: "",
     Jobs: [],
     items: [],
@@ -43,6 +44,7 @@ class Card extends React.Component {
     category: "",
     pricelevel: "",
     isModalVisible: false,
+    key: "",
     };
 
     
@@ -53,6 +55,8 @@ class Card extends React.Component {
     
     firebase.auth().onAuthStateChanged(function(user) {
                                        if (user) {
+                                        // const userID = user.uid;
+
                                        // User is signed in.
                                        const userProvider = user.providerData[0].providerId;
                                        const userData = firebase.firestore().collection('users').where("provider."+userProvider, "==", user.uid).get();
@@ -64,6 +68,7 @@ class Card extends React.Component {
                                                                                     user: doc.data(),
                                                                                     loaded: true
                                                                                     });
+                                                                                    
                                                                       })
                                                      }else{
                                                      // No data found
@@ -71,14 +76,22 @@ class Card extends React.Component {
                                                      that.props.navigation.navigate('Home');
                                                      }
                                                      });
-                                       
+
+                                        
+
                                        } else {
                                        // No user is signed in.
                                        that.props.navigation.navigate('Home');
                                        }
+
+                                       
                                        });
 
    this.setState({ isMounted: true });
+
+  //  this.setState({key: 'MenuScreen' + Math.round(Math.random()*100)});
+
+
 
    this.getProduct();
 
@@ -92,7 +105,7 @@ componentWillUnmount() {
 componentWillReceiveProps(props) {
     this.props = props
     if (this.props.refresh == true) {
-
+      // console.warn(9);
     }
 }
 
@@ -153,9 +166,10 @@ componentWillReceiveProps(props) {
                       currency: this.props.a.currency,
                       category: this.props.a.productcategory,
                       pricelevel: this.props.a.pricelevel,
+                      itemID: this.props.b
                     });
                     
-                    // console.warn(itemsID[this.props.a]);
+                    // console.warn(this.props.b);
                     var storage = firebase.storage();
                     // for (var i = 0; i <= itemsID.length - 1; i++) {
 
@@ -168,21 +182,120 @@ componentWillReceiveProps(props) {
                               console.warn(error);
                           })
                       // }  
+                      // console.warn(this.props.a.imagepath);
+                      // console.warn(this.state.url);
               }
     };
+    
+addtocart()
+{
+  const currentUser = firebase.auth().currentUser;
+
+  let FieldValue = firebase.firestore.FieldValue;
+
+  let ActiveCart = {
+    userID: currentUser.uid,
+    product: {
+        productID: this.state.itemID, 
+        productname: this.state.productname, 
+        productprice: this.state.productprice, 
+        productcurrency: this.state.currency, 
+        productquantity: 1},
+    // productID: this.state.itemID,
+    // productname: this.state.productname,
+    // price: this.state.productprice,
+    // quantity: 1,
+    timestamp: FieldValue.serverTimestamp(),
+  };
+
+  const db = firebase.firestore();
+  db.settings({ timestampsInSnapshots: true});
+          const query = db.collection('ActiveCart').doc(currentUser.uid);
+          const snapshot = query.get()
+          .then(doc => {
+            if (!doc.exists) {
+              console.warn('No such document!', currentUser.uid);
+              let setDoc = db.collection('ActiveCart').doc(currentUser.uid).set(ActiveCart, {merge: true});
+            } else {
+              // console.warn('Document data:', doc.data().product[0]);
+
+              const product = ActiveCart.product
+
+              // const product[5] = [ActiveCart.product[0]+","+ActiveCart.product[1]]
+
+              // console.warn(product.productID);
+              // console.warn(doc.data().product.productID);
+
+              if(product.productID.includes(doc.data().product.productID) == true){
+                ActiveCart.product.productquantity = ActiveCart.product.productquantity + 1
+
+                let ActiveCartFinal = {
+                  userID: ActiveCart.userID,
+                  product: ActiveCart.product,
+                  // productID: this.state.itemID,
+                  // productname: this.state.productname,
+                  // price: this.state.productprice,
+                  // quantity: ActiveCart.quantity + 1,
+                  timestamp: FieldValue.serverTimestamp(),
+                };
+                let setDoc = db.collection('ActiveCart').doc(currentUser.uid).set(ActiveCart, {merge: true});
+
+                // console.warn(product);
+                // console.warn(productfinal);
+                // console.warn(product.includes(doc.data().product[0]));
+                console.warn(ActiveCartFinal);
+
+              } else {
+
+
+              }
+
+              
+              // let setDoc = db.collection('ActiveCart').doc(currentUser.uid).set(ActiveCart, {merge: true});
+            }
+          })
+          .catch(err => {
+            console.warn('Error getting document', err);
+          });
+        
+
+
+  // console.warn(items, this.state.itemID, this.state.productname, this.state.productprice);
+  
+  // Add a new document in collection "cities" with ID 'LA'
+  
+  
+
+
+};
 
 
   render() {
+    const currentUser = firebase.auth().currentUser;
+    
+    // console.warn(this.state.key);
 
     if (this.state.url.length == 0) {
       return null
     }
     else {
+
+    // console.warn(items);
       // console.warn(this.state.url);
       // console.warn(this.state.productname);
     return (
       <View style={this.props.style}>
-        <TouchableOpacity activeOpacity={0.7} onPress={this.toggleModal} >
+        <TouchableOpacity activeOpacity={0.7} /*onPress={this.toggleModal} */ 
+                      onPress= {() => this.props.navigation.navigate({routeName: 'MenuScreen', 
+                      params: { 
+                        user : currentUser,
+                        items : this.props.a,
+                        productID : this.state.itemID, 
+                        productname : this.state.productname, 
+                        productprice : this.state.productprice, 
+                        productcurrency : this.state.currency
+                        },
+                        key: 'MenuScreen' + Math.round(Math.random()*100)})}>
         {/* <Modal isVisible={this.state.isModalVisible}> */}
           <View style={styles.container}>
             <View>
@@ -242,7 +355,7 @@ componentWillReceiveProps(props) {
               </View>
               
               <View style={styles.modalbuttons}>
-                <Button info style={styles.modalbutton1}>
+                <Button info style={styles.modalbutton1} onPress={() => this.addtocart(this.state.itemID, this.state.productname, this.state.productprice, this.state.currency)}>
                   <Text style={styles.modaltext1}> 
                     Add to Cart
                   </Text>
@@ -279,19 +392,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 5
-  },
-  modalcontainer: {
-    // width: 320,
-    backgroundColor: 'white',
-    marginBottom: 330,
-    marginTop: 150,
-    // marginVertical: 500,
-    padding: 10,
-    justifyContent: 'center'
-    // shadowColor: 'rgba(0,0,0,0.1)',
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 1,
-    // shadowRadius: 5
   },
   image: {
     height: 150

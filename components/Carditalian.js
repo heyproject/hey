@@ -153,9 +153,10 @@ componentWillReceiveProps(props) {
                       currency: this.props.a.currency,
                       category: this.props.a.productcategory,
                       pricelevel: this.props.a.pricelevel,
+                      itemID: this.props.b
                     });
                     
-                    // console.warn(itemsID[this.props.a]);
+                    // console.warn(this.props.b);
                     var storage = firebase.storage();
                     // for (var i = 0; i <= itemsID.length - 1; i++) {
 
@@ -173,6 +174,7 @@ componentWillReceiveProps(props) {
 
 
   render() {
+    const currentUser = firebase.auth().currentUser;
 
     if (this.state.url.length == 0) {
       return null
@@ -182,11 +184,52 @@ componentWillReceiveProps(props) {
       // console.warn(this.state.productname);
     return (
       <View style={this.props.style}>
-        <TouchableOpacity activeOpacity={0.7} onPress={this.toggleModal} >
-        {/* <Modal isVisible={this.state.isModalVisible}> */}
-          <View style={styles.container}>
+      <TouchableOpacity activeOpacity={0.7} /*onPress={this.toggleModal} */ 
+                    onPress= {() => this.props.navigation.navigate({routeName: 'MenuScreen', 
+                    params: { 
+                      user : currentUser,
+                      items : this.props.a,
+                      productID : this.state.itemID, 
+                      productname : this.state.productname, 
+                      productprice : this.state.productprice, 
+                      productcurrency : this.state.currency
+                      },
+                      key: 'MenuScreen' + Math.round(Math.random()*100)})}>
+      {/* <Modal isVisible={this.state.isModalVisible}> */}
+        <View style={styles.container}>
+          <View>
+            <Image style={styles.image} source={{ uri: this.state.url }} />
+            {/* <TouchableOpacity
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              activeOpacity={0.7}
+              onPress={() => this.state.liked ? this.unlike() : this.like()}
+              style={styles.iconContainer}
+            > */}
+              {/* <Animated.View style={{ transform: [{ scale: this.heartSize }] }}>
+                <Ionicons
+                  name={(Platform.OS === 'ios' ? 'ios-heart' : 'md-heart') + (this.state.liked ? '' : '-empty')}
+                  size={32}
+                  color="#fff"
+                />
+              </Animated.View> */}
+            {/* </TouchableOpacity> */}
+          </View>
+          <Text style={styles.title}>{this.state.productname}</Text>
+          <Text style={styles.description}>{this.state.pricelevel} . {this.state.category}</Text>
+          <View style={styles.tagContainer}>
+            <Tag>25-35 min</Tag>
+            <Tag>4.6 (500+)</Tag>
+            <Tag>Price: {this.state.currency} {this.state.productprice}</Tag>
+          </View>
+        </View>
+        {/* </Modal> */}
+      </TouchableOpacity>
+
+      <View>
+        <Modal isVisible={this.state.isModalVisible} hasBackdrop={true} coverScreen={true} style={styles.modalcontainer}>
+          {/* <View style={{marginTop:100}}> */}
             <View>
-              <Image style={styles.image} source={{ uri: this.state.url }} />
+              <Image style={styles.modalimage} source={{ uri: this.state.url }} />
               {/* <TouchableOpacity
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 activeOpacity={0.7}
@@ -202,65 +245,34 @@ componentWillReceiveProps(props) {
                 </Animated.View> */}
               {/* </TouchableOpacity> */}
             </View>
-            <Text style={styles.title}>{this.state.productname}</Text>
-            <Text style={styles.description}>{this.state.pricelevel} . {this.state.category}</Text>
-            <View style={styles.tagContainer}>
+            <Text style={styles.modaltitle}>{this.state.productname}</Text>
+            <Text style={styles.modaldescription}>{this.state.pricelevel} . {this.state.category}</Text>
+            <View style={styles.modaltagContainer}>
               <Tag>25-35 min</Tag>
               <Tag>4.6 (500+)</Tag>
               <Tag>Price: {this.state.currency} {this.state.productprice}</Tag>
             </View>
-          </View>
-          {/* </Modal> */}
-        </TouchableOpacity>
+            
+            <View style={styles.modalbuttons}>
+              <Button info style={styles.modalbutton1} onPress={() => this.addtocart(this.state.itemID, this.state.productname, this.state.productprice, this.state.currency)}>
+                <Text style={styles.modaltext1}> 
+                  Add to Cart
+                </Text>
+              </Button>
 
-        <View>
-          <Modal isVisible={this.state.isModalVisible} hasBackdrop={true} coverScreen={true} style={styles.modalcontainer}>
-            {/* <View style={{marginTop:100}}> */}
-              <View>
-                <Image style={styles.modalimage} source={{ uri: this.state.url }} />
-                {/* <TouchableOpacity
-                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                  activeOpacity={0.7}
-                  onPress={() => this.state.liked ? this.unlike() : this.like()}
-                  style={styles.iconContainer}
-                > */}
-                  {/* <Animated.View style={{ transform: [{ scale: this.heartSize }] }}>
-                    <Ionicons
-                      name={(Platform.OS === 'ios' ? 'ios-heart' : 'md-heart') + (this.state.liked ? '' : '-empty')}
-                      size={32}
-                      color="#fff"
-                    />
-                  </Animated.View> */}
-                {/* </TouchableOpacity> */}
-              </View>
-              <Text style={styles.modaltitle}>{this.state.productname}</Text>
-              <Text style={styles.modaldescription}>{this.state.pricelevel} . {this.state.category}</Text>
-              <View style={styles.modaltagContainer}>
-                <Tag>25-35 min</Tag>
-                <Tag>4.6 (500+)</Tag>
-                <Tag>Price: {this.state.currency} {this.state.productprice}</Tag>
-              </View>
-              
-              <View style={styles.modalbuttons}>
-                <Button info style={styles.modalbutton1}>
-                  <Text style={styles.modaltext1}> 
-                    Add to Cart
-                  </Text>
-                </Button>
-
-                <Button info style={styles.modalbutton2} onPress={this.toggleModal}>
-                  <Text style={styles.modaltext2}> 
-                    Cancel
-                  </Text>
-                </Button>
-              </View>
-            {/* </View> */}
-          </Modal>
-        </View>
-
-      
-
+              <Button info style={styles.modalbutton2} onPress={this.toggleModal}>
+                <Text style={styles.modaltext2}> 
+                  Cancel
+                </Text>
+              </Button>
+            </View>
+          {/* </View> */}
+        </Modal>
       </View>
+
+    
+
+    </View>
 
       
     )

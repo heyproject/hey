@@ -79,7 +79,7 @@ class ReviewScreen extends React.Component {
 
    this.setState({ isMounted: true });
 
-   this.getProductcomments();
+   this.getProduct();
 
    this.didFocusListener = this.props.navigation.addListener(
     'didFocus',
@@ -114,10 +114,11 @@ componentWillReceiveProps(props) {
     this.heartSize.setValue(1)
   }
 
-  async getProductcomments()
+  async getProduct()
   { var that = this;
     // var i = 0;
     // var photoID = 0;
+    
     
     if (this.state.mounted == true) {
     // var i = 0;
@@ -134,8 +135,6 @@ componentWillReceiveProps(props) {
                     // photoID = i + 1, 
                   );
                   
-
-
                   // photoID = i + 1;
 
                   const itemsID = snapshot.docs.map(doc => doc.id);
@@ -160,6 +159,8 @@ componentWillReceiveProps(props) {
                     comments: this.props.a.comments
                   });
                   
+                  // console.warn(this.props.navigation.state.params);
+                  // console.warn(this.state.items);
                   // console.warn(this.props.a);
                   // console.warn(this.props.b);
                     // }  

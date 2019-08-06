@@ -44,6 +44,7 @@ class Card extends React.Component {
     category: "",
     pricelevel: "",
     isModalVisible: false,
+    key: "",
     };
 
     
@@ -88,6 +89,7 @@ class Card extends React.Component {
 
    this.setState({ isMounted: true });
 
+  //  this.setState({key: 'MenuScreen' + Math.round(Math.random()*100)});
 
 
 
@@ -270,6 +272,8 @@ addtocart()
 
   render() {
     const currentUser = firebase.auth().currentUser;
+    
+    // console.warn(this.state.key);
 
     if (this.state.url.length == 0) {
       return null
@@ -282,16 +286,16 @@ addtocart()
     return (
       <View style={this.props.style}>
         <TouchableOpacity activeOpacity={0.7} /*onPress={this.toggleModal} */ 
-                      onPress= {() => this.props.navigation.navigate('MenuScreen', 
-                              { 
-                                user : currentUser,
-                                items : this.props.a,
-                                productID : this.state.itemID, 
-                                productname : this.state.productname, 
-                                productprice : this.state.productprice, 
-                                productcurrency : this.state.currency
-                                },
-                                'MenuScreen' + 2)}>
+                      onPress= {() => this.props.navigation.navigate({routeName: 'MenuScreen', 
+                      params: { 
+                        user : currentUser,
+                        items : this.props.a,
+                        productID : this.state.itemID, 
+                        productname : this.state.productname, 
+                        productprice : this.state.productprice, 
+                        productcurrency : this.state.currency
+                        },
+                        key: 'MenuScreen' + Math.round(Math.random()*100)})}>
         {/* <Modal isVisible={this.state.isModalVisible}> */}
           <View style={styles.container}>
             <View>

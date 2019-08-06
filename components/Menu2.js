@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 import { Platform, View, Text, TouchableOpacity, StyleSheet, Image, Animated, StatusBar, TouchableHighlight, ScrollView } from 'react-native'
 import { createBottomTabNavigator, createAppContainer, withNavigationFocus } from 'react-navigation'
 import Tag from './Tag';
-import Tab1 from './Review';
-import Tab2 from './Info';
+import Tab1 from './Review2';
+import Tab2 from './Info2';
 // import { Ionicons } from '@expo/vector-icons';
 import * as firebase from 'react-native-firebase';
 import Modal from "react-native-modal";
@@ -17,9 +17,9 @@ import CardList from '../components/CardList'
 
 
 
-export default class MenuScreen extends Component <Props> {
+export default class MenuScreen2 extends Component <Props> {
   static navigationOptions = {
-    title: 'MenuScreen',
+    title: 'MenuScreen2',
     };
   constructor(props) {
     super(props);
@@ -40,11 +40,11 @@ export default class MenuScreen extends Component <Props> {
     userID: "",
     JobData: "",
     Jobs: [],
-    items: [],
-    itemsID: [],
+    items2: [],
+    itemsID2: [],
     items_array: [],
     Provider:"",
-    itemID: [],
+    itemID2: [],
     itemID_array: [],
     Jobdetails: "",
     ProductID: [],
@@ -159,6 +159,7 @@ componentWillReceiveProps(props) {
   selectComponent = (activePage) => () => this.setState({activePage});
 
   _renderComponent = () => {
+    // console.warn(this.state.activePage);
     if(this.state.activePage === 1)
       return <Tab1 a={this.props.navigation.state.params.items} b={this.props.navigation.state.params.productID}/> //... Your Component 1 to display
     else 
@@ -180,24 +181,24 @@ componentWillReceiveProps(props) {
                     const query = db.collection('Productcomments').where('productID', '==', this.props.navigation.state.params.productID);
                     const snapshot = await query.get();
 
-                    const items = snapshot.docs.map(
+                    const items2 = snapshot.docs.map(
                       doc => doc.data(),
                       // photoID = i + 1, 
                     );
                     
                     // photoID = i + 1;
 
-                    const itemsID = snapshot.docs.map(doc => doc.id);
-                    var itemsID = snapshot.docs.map(
+                    const itemsID2 = snapshot.docs.map(doc => doc.id);
+                    var itemsID2 = snapshot.docs.map(
                       doc => doc.id,
                       
                       );
 
-                      this.setState({ items: items,
-                                      itemsID: itemsID
+                      this.setState({ items2: items2,
+                                      itemsID2: itemsID2
                       });
-                      // console.warn(this.props.navigation.state);
-                      // console.warn(this.props.navigation.state.params);
+                      // console.warn(this.props.navigation.state.params.items);
+                      // console.warn(this.props.navigation.state.params.productID);
 
                     this.setState({ productname: this.props.navigation.state.params.items.productname,
                       productprice: this.props.navigation.state.params.items.price,
@@ -221,8 +222,6 @@ componentWillReceiveProps(props) {
                               console.warn(error);
                           })
                       // }  
-                      // console.warn(this.props.navigation.state.params.items);
-                      // console.warn(this.props.navigation.state.params.productID);
               }
     };
 
@@ -234,7 +233,7 @@ componentWillReceiveProps(props) {
                     const query = db.collection('Products').where('available', '==', 'Y').where('productcategory', '==',this.props.navigation.state.params.items.productcategory).limit(10);
                     const snapshot = await query.get();
 
-                    const items = snapshot.docs.map(
+                    const items2 = snapshot.docs.map(
                       doc => doc.data(),
                       // photoID = i + 1, 
                     );
@@ -243,19 +242,19 @@ componentWillReceiveProps(props) {
                     // photoID = i + 1;
                         // console.warn('MenuScreen' + Math.round(Math.random()*100));
                     // const itemsID = snapshot.docs.map(doc => doc.id);
-                    var itemsID = snapshot.docs.map(
+                    var itemsID2 = snapshot.docs.map(
                       doc => doc.data().imagepath,
                       
                       );
 
-                      const itemID = snapshot.docs.map(
+                      const itemID2 = snapshot.docs.map(
                         doc => doc.id,
                         // photoID = i + 1, 
                       );
 
-                      this.setState({ myfavitems: items,
-                                      myfavitemsID: itemsID,
-                                      myfavitemID: itemID
+                      this.setState({ myfavitems: items2,
+                                      myfavitemsID: itemsID2,
+                                      myfavitemID: itemID2
                       });
                   //  console.warn(this.state.myfavitems.length);
                   //  console.warn(this.state.myfavitemID.length);
@@ -347,7 +346,6 @@ addtocart()
 
   render() {
     const currentUser = firebase.auth().currentUser;
-    // console.warn(this.props.navigation.state.params.items);
 
     if (this.state.url.length == 0) {
       return null

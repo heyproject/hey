@@ -189,8 +189,17 @@ export default class MainTabScreen extends Component <Props> {
     };
 
     
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+        // console.log("MenuScreen constructor start");
+        // this.didFocusListener = this.props.navigation.addListener(
+        //         'didFocus',
+        //         (obj) => {console.log("MenuScreen didFocus start")}
+        //     );
+        // this.didBlurListener = this.props.navigation.addListener(
+        //         'didBlur',
+        //         (obj) => {console.log('MenuScreen didBlur start')}
+        //     );
         this.timeout = 20;
         this.state = {
         user: "",
@@ -312,7 +321,7 @@ export default class MainTabScreen extends Component <Props> {
                                       myfavitemsID: itemsID,
                                       myfavitemID: itemID
                       });
-                //    console.warn(itemID);
+                //    console.warn(Math.round(Math.random()*100));
                   }
     };
         
@@ -338,8 +347,14 @@ export default class MainTabScreen extends Component <Props> {
                       
                       );
 
+                      const itemID = snapshot.docs.map(
+                        doc => doc.id,
+                        // photoID = i + 1, 
+                      );
+
                       this.setState({ italianitems: items,
-                                    italianitemsID: itemsID
+                                    italianitemsID: itemsID,
+                                    italianitemID: itemID
                       });
                    
                   }
@@ -366,8 +381,14 @@ export default class MainTabScreen extends Component <Props> {
                       
                       );
 
+                      const itemID = snapshot.docs.map(
+                        doc => doc.id,
+                        // photoID = i + 1, 
+                      );
+
                       this.setState({ koreanitems: items,
-                                    koreanitemsID: itemsID
+                                    koreanitemsID: itemsID,
+                                    koreanitemID: itemID
                       });
                    
                   }
@@ -394,8 +415,14 @@ export default class MainTabScreen extends Component <Props> {
                       
                       );
 
+                      const itemID = snapshot.docs.map(
+                        doc => doc.id,
+                        // photoID = i + 1, 
+                      );
+
                       this.setState({ specialdealitems: items,
-                                    specialdealitemsID: itemsID
+                                    specialdealitemsID: itemsID,
+                                    specialdealitemID: itemID
                       });
                    
                   }
@@ -578,71 +605,71 @@ export default class MainTabScreen extends Component <Props> {
                             </CardList>
                             <CardList title={'Italian foods'}>
                                 <If condition={this.state.italianitems.length > 0}>
-                                    <Card2 style={styles.card} a={this.state.italianitems[0]}/>
+                                    <Card2 style={styles.card} a={this.state.italianitems[0]} b={this.state.italianitemID[0]}/>
                                 </If>
                                 <If condition={this.state.italianitems.length > 1}>
-                                    <Card2 style={styles.card} a={this.state.italianitems[1]}/>
+                                    <Card2 style={styles.card} a={this.state.italianitems[1]} b={this.state.italianitemID[1]}/>
                                 </If>
                                 <If condition={this.state.italianitems.length > 2}>
-                                    <Card2 style={styles.card} a={this.state.italianitems[2]}/>
+                                    <Card2 style={styles.card} a={this.state.italianitems[2]} b={this.state.italianitemID[2]}/>
                                 </If>
                                 <If condition={this.state.italianitems.length > 3}>
-                                    <Card2 style={styles.card} a={this.state.italianitems[3]}/>
+                                    <Card2 style={styles.card} a={this.state.italianitems[3]} b={this.state.italianitemID[3]}/>
                                 </If>
                                 <If condition={this.state.italianitems.length > 4}>
-                                    <Card2 style={styles.card} a={this.state.italianitems[4]}/>
+                                    <Card2 style={styles.card} a={this.state.italianitems[4]} b={this.state.italianitemID[4]}/>
                                 </If>
                                 <If condition={this.state.italianitems.length > 5}>
-                                    <Card2 style={styles.card} a={this.state.italianitems[5]}/>
+                                    <Card2 style={styles.card} a={this.state.italianitems[5]} b={this.state.italianitemID[5]}/>
                                 </If>
                                 <If condition={this.state.italianitems.length > 6}>
-                                    <Card2 style={styles.card} a={this.state.italianitems[6]}/>
+                                    <Card2 style={styles.card} a={this.state.italianitems[6]} b={this.state.italianitemID[6]}/>
                                 </If>
                             </CardList>
                             <CardList title={'Korean foods'}>
                                 <If condition={this.state.koreanitems.length > 0}>
-                                    <Card3 style={styles.card} a={this.state.koreanitems[0]}/>
+                                    <Card3 style={styles.card} a={this.state.koreanitems[0]} b={this.state.koreanitemID[0]}/>
                                 </If>
                                 <If condition={this.state.koreanitems.length > 1}>
-                                    <Card3 style={styles.card} a={this.state.koreanitems[1]}/>
+                                    <Card3 style={styles.card} a={this.state.koreanitems[1]} b={this.state.koreanitemID[1]}/>
                                 </If>
                                 <If condition={this.state.koreanitems.length > 2}>
-                                    <Card3 style={styles.card} a={this.state.koreanitems[2]}/>
+                                    <Card3 style={styles.card} a={this.state.koreanitems[2]} b={this.state.koreanitemID[2]}/>
                                 </If>
                                 <If condition={this.state.koreanitems.length > 3}>
-                                    <Card3 style={styles.card} a={this.state.koreanitems[3]}/>
+                                    <Card3 style={styles.card} a={this.state.koreanitems[3]} b={this.state.koreanitemID[3]}/>
                                 </If>
                                 <If condition={this.state.koreanitems.length > 4}>
-                                    <Card3 style={styles.card} a={this.state.koreanitems[4]}/>
+                                    <Card3 style={styles.card} a={this.state.koreanitems[4]} b={this.state.koreanitemID[4]}/>
                                 </If>
                                 <If condition={this.state.koreanitems.length > 5}>
-                                    <Card3 style={styles.card} a={this.state.koreanitems[5]}/>
+                                    <Card3 style={styles.card} a={this.state.koreanitems[5]} b={this.state.koreanitemID[5]}/>
                                 </If>
                                 <If condition={this.state.koreanitems.length > 6}>
-                                    <Card3 style={styles.card} a={this.state.koreanitems[6]}/>
+                                    <Card3 style={styles.card} a={this.state.koreanitems[6]} b={this.state.koreanitemID[6]}/>
                                 </If>
                             </CardList>
                             <CardList title={'Special Deals'}>
                             <If condition={this.state.specialdealitems.length > 0}>
-                                    <Card4 style={styles.card} a={this.state.specialdealitems[0]}/>
+                                    <Card4 style={styles.card} a={this.state.specialdealitems[0]} b={this.state.specialdealitemID[0]}/>
                                 </If>
                                 <If condition={this.state.specialdealitems.length > 1}>
-                                    <Card4 style={styles.card} a={this.state.specialdealitems[1]}/>
+                                    <Card4 style={styles.card} a={this.state.specialdealitems[1]} b={this.state.specialdealitemID[1]}/>
                                 </If>
                                 <If condition={this.state.specialdealitems.length > 2}>
-                                    <Card4 style={styles.card} a={this.state.specialdealitems[2]}/>
+                                    <Card4 style={styles.card} a={this.state.specialdealitems[2]} b={this.state.specialdealitemID[2]}/>
                                 </If>
                                 <If condition={this.state.specialdealitems.length > 3}>
-                                    <Card4 style={styles.card} a={this.state.specialdealitems[3]}/>
+                                    <Card4 style={styles.card} a={this.state.specialdealitems[3]} b={this.state.specialdealitemID[3]}/>
                                 </If>
                                 <If condition={this.state.specialdealitems.length > 4}>
-                                    <Card4 style={styles.card} a={this.state.specialdealitems[4]}/>
+                                    <Card4 style={styles.card} a={this.state.specialdealitems[4]} b={this.state.specialdealitemID[4]}/>
                                 </If>
                                 <If condition={this.state.specialdealitems.length > 5}>
-                                    <Card4 style={styles.card} a={this.state.specialdealitems[5]}/>
+                                    <Card4 style={styles.card} a={this.state.specialdealitems[5]} b={this.state.specialdealitemID[5]}/>
                                 </If>
                                 <If condition={this.state.specialdealitems.length > 6}>
-                                    <Card4 style={styles.card} a={this.state.specialdealitems[6]}/>
+                                    <Card4 style={styles.card} a={this.state.specialdealitems[6]} b={this.state.specialdealitemID[6]}/>
                                 </If>
                             </CardList>
                         </View>

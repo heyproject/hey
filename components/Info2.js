@@ -1,6 +1,6 @@
 import React from 'react'
 import { Platform, View, Text, TouchableOpacity, StyleSheet, Image, Animated } from 'react-native'
-import { createBottomTabNavigator, withNavigation } from 'react-navigation'
+import { withNavigation } from 'react-navigation'
 import Tag from './Tag'
 // import { Ionicons } from '@expo/vector-icons';
 import * as firebase from 'react-native-firebase';
@@ -9,15 +9,9 @@ import { Container, Header, Content, Footer, FooterTab, Button, Icon, Badge, Lis
 // import {Fonts, Ionicons, Icons} from 'react-native-vector-icons';
 
 
-class ReviewScreen extends React.Component {
-  static navigationOptions = {
-    title: 'ReviewScreen',
-    };
+class InfoScreen extends React.Component {
   constructor(props) {
-    super(props);
-    this.state={
-      defaultTab: 'vertical-tab-one'
-    };
+    super(props)
     this.heartSize = new Animated.Value(1);
     this.state = {
       liked: false,
@@ -44,6 +38,7 @@ class ReviewScreen extends React.Component {
     mounted: true,
     image: "/Products/image2.jpg",
     url: "",
+    info: "",
     };
 }
 
@@ -79,7 +74,7 @@ class ReviewScreen extends React.Component {
 
    this.setState({ isMounted: true });
 
-   this.getProductcomments();
+   this.getProduct();
 
    this.didFocusListener = this.props.navigation.addListener(
     'didFocus',
@@ -91,7 +86,7 @@ class ReviewScreen extends React.Component {
 componentWillUnmount() {
     this.setState({ isMounted: false });
     this.didFocusListener.remove();
-    // console.warn(11);
+    // console.warn(12);
 }
 
 componentWillReceiveProps(props) {
@@ -114,7 +109,7 @@ componentWillReceiveProps(props) {
     this.heartSize.setValue(1)
   }
 
-  async getProductcomments()
+  async getProduct()
   { var that = this;
     // var i = 0;
     // var photoID = 0;
@@ -126,7 +121,7 @@ componentWillReceiveProps(props) {
 
     const db = firebase.firestore();
           db.settings({ timestampsInSnapshots: true});
-                  const query = db.collection('Productcomments').where('productID', '==', this.props.b);
+                  const query = db.collection('Products').where('productID', '==', this.props.navigation.state.params.productID);
                   const snapshot = await query.get();
 
                   const items = snapshot.docs.map(
@@ -134,8 +129,6 @@ componentWillReceiveProps(props) {
                     // photoID = i + 1, 
                   );
                   
-
-
                   // photoID = i + 1;
 
                   const itemsID = snapshot.docs.map(doc => doc.id);
@@ -147,25 +140,66 @@ componentWillReceiveProps(props) {
                     this.setState({ items: items,
                                     itemsID: itemsID
                     });
-                    // console.warn(this.props.navigation.state.params.productID);
-                    // console.warn(items);
-                    // console.warn(this.state.items[0].comments[0]);
+                    // console.warn(this.props.a);
+                    // console.warn(this.props.b);
+                    // console.warn(this.props.navigation.state.params);
 
-                  this.setState({ productname: this.props.a.productname,
-                    productprice: this.props.a.price,
-                    currency: this.props.a.currency,
-                    category: this.props.a.productcategory,
-                    pricelevel: this.props.a.pricelevel,
-                    itemID: this.props.b,
-                    comments: this.props.a.comments
+                  this.setState({ productname: this.props.navigation.state.params.items.productname,
+                    productprice: this.props.navigation.state.params.items.price,
+                    currency: this.props.navigation.state.params.items.currency,
+                    category: this.props.navigation.state.params.items.productcategory,
+                    pricelevel: this.props.navigation.state.params.items.pricelevel,
+                    itemID: this.props.navigation.state.params.productID,
+                    comments: this.props.navigation.state.params.items.comments,
+                    info: this.props.navigation.state.params.items.info
                   });
                   
-                  // console.warn(this.props.a);
-                  // console.warn(this.props.b);
+                  
                     // }  
             }
   };
 
+    getProductdetails()
+    {
+      // if (this.state.mounted == true) {
+      var i = 0;
+      var photoID = 0;
+      var storage = firebase.storage();
+                    for (var i = 0; i <= this.state.itemsID.length - 1; i++) {
+                      // photoId = i + 1;
+                      // console.warn(itemsID[i]);
+                      
+                      this.setState({ productname: this.state.items[i].productname 
+                      });
+                      // console.warn(this.state.itemsID);
+
+                      refPath = storage.ref(this.state.itemsID[i]);
+                      
+                      // (function(pid) {
+                          refPath.getDownloadURL().then(data => {
+                                this.setState({ url: data}),
+                                this.setState({ loading: false });
+                  //               this.setState({ productname: items[i].productname ,
+                  //                 productprice: items[i].price
+                  // });
+                                // console.warn(this.state.url);
+                      // console.warn(this.state.productname);
+                      //           console.warn(this.state.url);
+                                // this.setState({ Product: items[i] });
+                                // console.warn(data);
+                            }).catch(function(error) {
+                              console.warn(error);
+                          })
+                      // });
+                      
+                      // console.warn(this.state.productprice);
+                      // console.warn(this.state.productname);
+                      //           console.warn(this.state.url);
+                    // console.warn(photoID);
+                    // console.warn(i);
+                  }
+                // }
+    };
 
   render() {
     if (this.state.itemsID.length == 0) {
@@ -174,7 +208,7 @@ componentWillReceiveProps(props) {
     // console.warn(this.state.itemsID);
     // this.getProductdetails();
     }
-    // console.warn(this.state.items);
+    // console.warn(this.state.itemsID.length);
     // console.warn(this.state.url.length);
     // this.getProductdetails(this.state.itemsID);
 
@@ -186,36 +220,28 @@ componentWillReceiveProps(props) {
       // console.warn(this.state.productname);
     return (
       <View style={this.props.style}>
-          <View style={{marginLeft: -10, marginRight: -10, marginTop: -13}}>
-                  <Content padder>
-                    <Card>
-                      <CardItem bordered>
-                        <Body>
-                          <Text>
-                            {this.state.items[0].comments[0]}
-                          </Text>
-                        </Body>
-                      </CardItem>
-                      <CardItem bordered>
-                        <Text>{this.state.items[0].comments[1]} </Text>
-                      </CardItem>
-                      <CardItem footer bordered>
-                        <Text>{this.state.items[0].comments[2]} </Text>
-                      </CardItem>
-                    </Card>
-                  </Content>
+      <View style={{marginLeft: -10, marginRight: -10, marginTop: -13}}>
+              <Content padder>
+                <Card>
+                  <CardItem bordered>
+                    <Body>
+                      <Text>
+                        {this.state.items[0].info}
+                      </Text>
+                    </Body>
+                  </CardItem>
+                </Card>
+              </Content>
 
 
-            </View>
-      </View>
-
-      
+        </View>
+  </View>
     )
     }
   }
 }
 
-export default withNavigation(ReviewScreen)
+export default withNavigation(InfoScreen)
 
 const styles = StyleSheet.create({
   container: {

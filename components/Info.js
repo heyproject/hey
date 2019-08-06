@@ -121,7 +121,7 @@ componentWillReceiveProps(props) {
 
     const db = firebase.firestore();
           db.settings({ timestampsInSnapshots: true});
-                  const query = db.collection('Products').where('productID', '==', this.props.navigation.state.params.productID);
+                  const query = db.collection('Products').where('productID', '==', this.props.b);
                   const snapshot = await query.get();
 
                   const items = snapshot.docs.map(
@@ -144,14 +144,14 @@ componentWillReceiveProps(props) {
                     // console.warn(this.props.b);
                     // console.warn(this.state.items[0].info);
 
-                  this.setState({ productname: this.props.navigation.state.params.items.productname,
-                    productprice: this.props.navigation.state.params.items.price,
-                    currency: this.props.navigation.state.params.items.currency,
-                    category: this.props.navigation.state.params.items.productcategory,
-                    pricelevel: this.props.navigation.state.params.items.pricelevel,
-                    itemID: this.props.navigation.state.params.productID,
-                    comments: this.props.navigation.state.params.items.comments,
-                    info: this.props.navigation.state.params.items.info
+                  this.setState({ productname: this.props.a.productname,
+                    productprice: this.props.a.price,
+                    currency: this.props.a.currency,
+                    category: this.props.a.productcategory,
+                    pricelevel: this.props.a.pricelevel,
+                    itemID: this.props.b,
+                    comments: this.props.a.comments,
+                    info: this.props.a.info
                   });
                   
                   
