@@ -139,10 +139,10 @@ componentWillReceiveProps(props) {
                   // photoID = i + 1;
 
                   const itemsID = snapshot.docs.map(doc => doc.id);
-                  var itemsID = snapshot.docs.map(
-                    doc => doc.id,
+                  // var itemsID = snapshot.docs.map(
+                  //   doc => doc.id,
                     
-                    );
+                  //   );
 
                     this.setState({ items: items,
                                     itemsID: itemsID

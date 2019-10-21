@@ -12,6 +12,8 @@
 #import <Firebase.h>
 #import <GoogleMaps/GoogleMaps.h>
 
+@import GoogleMobileAds;
+
 @import GoogleMaps;
 
 @import GooglePlaces;
@@ -40,6 +42,8 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  
+  [[GADMobileAds sharedInstance] startWithCompletionHandler:nil];
   return YES;
 }
 
